@@ -1,0 +1,151 @@
+<app-breadcrumb [rutas]="rutas" titulo="Periodos"></app-breadcrumb>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-auto col-md-auto col-sm-auto">
+                        <button type="button" (click)="abrirNuevoPeriodo()"
+                                class="btn w-100 btn-sm btn-primary waves-light waves-effect btn-label">
+                            <i class="fa fa-file label-icon"></i> Nuevo Periodo
+                        </button>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-xl-12">
+                        <app-loading [mostrar]="loading">
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th style="width: 110px; min-width: 110px">Acciones</th>
+                                                <th class="text-center" style="min-width: 150px; width: 150px">Código
+                                                </th>
+                                                <th style="min-width: 260px; width: 300px">Descripción</th>
+                                                <th style="min-width: 100px; width: 100px">Desde</th>
+                                                <th style="min-width: 100px; width: 100px">Hasta</th>
+                                                <th style="min-width: 60px; width: 60px">Divi</th>
+                                                <th style="min-width: 60px; width: 60px">Multi</th>
+                                                <th style="min-width: 60px; width: 60px">Fact.Asis</th>
+                                                <th class="text-center" style="width: 80px; min-width: 80px">Estado</th>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <button type="button" (click)="limpiarPeriodos()"
+                                                            class="btn btn-sm w-100 btn-danger waves-effect waves-light">
+                                                        Limpiar
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <input #inpFocus type="text" [(ngModel)]="filtros.id"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarPeriodo()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                <td>
+                                                    <input type="text" [(ngModel)]="filtros.descripcion"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarPeriodo()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                         
+                                                 <td>
+                                                    <input type="text" [(ngModel)]="filtros.desde"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarPeriodo()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                 <td>
+                                                    <input type="text" [(ngModel)]="filtros.hasta"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarPeriodo()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                       <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                 <td>
+                                                    <input type="text" [(ngModel)]="filtros.estado"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarPeriodo()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (periodo of periodos; track periodo.id) {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex gap-1 flex-wrap">
+                                                                @if (periodo.estado != '0') {
+                                                                    <button bsTooltip="Editar"
+                                                                            (click)="abrirEditarPerfil(periodo.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-primary">
+                                                                        <i class="fa fa-pencil"></i></button>
+                                                                     
+                                                                   
+                                                                     <button bsTooltip="Formato"
+                                                                            (click)="generarFormatos(periodo.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-info">
+                                                                        <i class="fas fa-retweet"></i></button>
+                                                                         <button bsTooltip="Anular"
+                                                                            (click)="abrirAnularPeriodo(periodo.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-danger">
+                                                                        <i class="fa fa-trash"></i></button>
+                                                                } @else {
+                                                                    <button bsTooltip="Activar"
+                                                                            (click)="abrirActivarPeriodo(periodo.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-success">
+                                                                        <i class="fa fa-check"></i></button>
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">{{ periodo.id }}</td>
+                                                        <td>{{ periodo.descripcion }}</td>
+                                                        <td>{{ periodo.desde }}</td>
+                                                        <td>{{ periodo.hasta }}</td>
+                                                        <td>{{ periodo.div }}</td>
+                                                        <td>{{ periodo.mult }}</td>
+                                                        <td>{{ periodo.asis}}</td>
+
+                                                        <td class="text-center">
+                                                            @if (periodo.estado == '03') {
+                                                                <span class="badge rounded-pill text-bg-success">
+                                                                    {{ periodo.des_estado }}</span>
+                                                            } @else if (periodo.estado == '01') {
+                                                                <span class="badge rounded-pill text-bg-success">
+                                                                    {{ periodo.des_estado }}</span>
+                                                            }@else {
+                                                                 <span class="badge rounded-pill text-bg-dark">
+                                                                    {{ periodo.des_estado }}</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                } @empty {
+                                                    <tr class="text-center">
+                                                        <td colspan="5">No hay items que mostrar</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> 
+                            </div>
+                            <app-paginado [datos]="periodos" [(longitud)]="longitud" [pagina]="pagina"
+                                          (cambioVer)="listarPeriodos()"
+                                          [ver]="true" (cambioPagina)="cambioPagina($event)">
+                            </app-paginado>
+                        </app-loading>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<app-modal-periodo></app-modal-periodo> 
+
+
+

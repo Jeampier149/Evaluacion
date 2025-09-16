@@ -1,0 +1,68 @@
+// Tabla
+.table tbody tr {
+    vertical-align: middle;
+}
+
+.logo-navbar {
+    background-image: url("../assets/img/logo_honadomani.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.img-profile {
+    background-image: url("../assets/img/logo-hsb.jpg");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.img-not-found {
+    background-image: url("../assets/img/error-img.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: auto;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -20;
+}
+
+.logo-login {
+    background-image: url("../assets/img/logo_honadomani.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+}
+
+.bg-final{
+    background-color: rgba(0, 171, 250, 0.986)!important;
+    color: white;
+}
+.bg-prim{
+    background-color: rgba(0, 171, 250, 0.986) !important;
+    color: white;
+}
+.bg-prim:hover {
+     color: #fff; /* Color del texto al pasar el cursor */
+    background-color: #0069d9; /* Color de fondo al pasar el cursor */ 
+    border-color: #0062cc; /* Color del borde al pasar el cursor */ 
+} 
+.bg-prim:disabled {
+   color: #fff; /* Color del texto al pasar el cursor */
+  
+} 
+.bg-prim:focus, .btn-primary.focus 
+{ color: #fff; 
+    background-color: 
+    #0069d9; border-color: 
+    #0062cc; box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); }/*} Sombra al enfocar */
+
+a {
+    cursor:pointer
+}

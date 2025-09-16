@@ -1,0 +1,257 @@
+<div class="row px-1 mx-1 my-3 mt-1 mb-5">
+   <div class="card">
+        <div class="card-body">
+            @if (periodo) {
+            <h4 class="text-center pb-2 border-bottom">
+                EVALUACIÓN DE DESEMPEÑO Y CONDUCTA LABORAL - {{ periodo }}
+            </h4>
+            }
+
+            <table class="mt-4 enc">
+                <tbody class="justify-content-center">
+                    @if (data?.info_evaluacion) {
+                    <tr> 
+                        <td>
+                            <span><span class="label"><b>Evaluador:</b></span> {{data.info_evaluacion?.nombre_evaluador}}</span>
+                        </td>
+                    </tr>
+                    <tr> 
+                        <td>
+                            <span><span class="label"><b>Evaluado:</b></span> {{data.info_evaluacion?.nombre_evaluado}}</span>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>  
+</div>
+
+<div class="card-body px-2 mx-1 my-3 mt-4">
+    <!-- Nav tabs -->
+    <ul class="nav nav-pills nav-fill" role="tablist">
+        <li class="nav-item waves-effect waves-light" role="presentation">
+            <a class="nav-link active" data-bs-toggle="tab" href="#home-1" role="tab" aria-selected="true">
+                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                <span class="d-none d-sm-block">EVALUACION DE DESEMPEÑO Y CONDUCTA LABORAL</span> 
+            </a>
+        </li>                                            
+        <li class="nav-item waves-effect waves-light" role="presentation">
+            <a class="nav-link" data-bs-toggle="tab" href="#messages-1" role="tab" aria-selected="false">
+                <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                <span class="d-none d-sm-block">HISTORIAL</span>   
+            </a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content p-0 text-muted m-0">
+        <div class="tab-pane active show" id="home-1" role="tabpanel">
+            <div class="mt-4">
+                @if (loading) {
+                    <div class="text-center py-4">Cargando evaluación...</div>
+                } @else if (data?.factores) {
+                <table class="table table-bordered text-center align-middle">
+                    <thead>
+                        <tr>
+                       @if(this.categoria=='05'){ <th>ESCALA DE EVALUACIÓN</th>}
+                            <th>FACTORES ÚNICOS</th>
+                            <th>I @if(this.categoria=='05'){ <br> Excelente <br>(18 a 20) }</th>
+                            <th>II @if(this.categoria=='05'){ <br> Bueno <br>(14 a 17) }</th>
+                            <th>III @if(this.categoria=='05'){ <br> Regular <br>(11 a 13) }</th> 
+                            <th>IV @if(this.categoria=='05'){ <br> Deficiente<br>(0 a 10) }</th>
+                       @if(this.categoria!=='05'){ <th>V</th>}    
+                            <th style="width: 100px; max-width: 100px;">Puntaje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (factor of data.factores; track factor.id_factor; let i = $index) {
+                        <!-- Fila de descripciones -->
+                        <tr >
+                         @if(this.categoria=='05'){  <td [attr.rowspan]="this.categoria=='05' ? 2 : null"> <b></b> {{ factor.ct_escala }}</td>}
+         
+                            <td class="text-start" rowspan="2"> 
+                                <b>{{i + 1 }}.- {{ factor.factor }}</b>
+                                {{ factor.descripcion_factor }}
+                            </td>
+
+                            @for (criterio of factor.criterios; track criterio.id_factor_criterio) {
+                            <td class="text-center align-top">
+                                {{ criterio.descripcion_factor_criterio }}
+                            </td>
+                            }
+
+                            <!-- Puntaje -->
+                            <td   rowspan="2">
+                                 @if(this.categoria=='05'){
+                                <select class="form-select" aria-label="Default select example" [(ngModel)]="factor.puntaje_asig" >
+                                                        <option ></option>
+  
+                                                        <option *ngFor="let num of factor.valores" 
+                                                         [ngValue]="num">
+                                                         {{ num }}
+                                </select>   }@else {
+                                        {{ factor.puntaje_asig | number:'1.2-2'}} 
+                                }
+                            
+                            </td>
+                        </tr>
+  
+                        <!-- Fila de radios -->
+                        <tr class="fila-radios">                                                                
+                            @for (criterio of factor.criterios; track criterio.id_factor_criterio) {
+                            <td class="text-center">
+                                <input
+                                    class="form-check-input radio-lg"
+                                    type="radio"
+                                    name="factor_{{ factor.id_factor }}"  
+                                    id="crit_{{ criterio.id_factor_criterio }}"
+                                    [value]="criterio.desde"
+                                    [checked]="factor.id_factor_criterio==criterio.id_factor_criterio"
+                                    (change)="categoria == '05' ? 
+                                                asignarPuntajeCas(criterio.desde, criterio.hasta,factor,criterio.id_factor_criterio) : 
+                                                asignarPuntaje(factor, criterio.desde, criterio.id_factor_criterio, criterio.hasta)"
+                                                                    
+                                >
+                            </td>
+                            }
+                        </tr>
+                        }
+                        <tr>
+                            <td colspan="6" style="text-align: right;"> <b>TOTAL</b></td>
+                            <td><b>{{ puntajeTotal() | number:'1.2-2'}}</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="row mt-5">
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="recomendaciones">Recomendaciones y/o sugerencias al Evaluado</label>
+                            <textarea class="form-control" id="recomendaciones" rows="6"[(ngModel)]="data.info_evaluacion.ct_recomendacion"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <p>Cree Ud. que el evaluado mejoraría en su desempeño laboral con algunos cursos de capacitación</p>
+                       <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="capacitacion" id="inlineRadio1" 
+                          [value]="1" [(ngModel)]="data.info_evaluacion.cfl_capacitacion">
+                    <label class="form-check-label" for="inlineRadio1">Si</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="capacitacion" id="inlineRadio2" 
+                            [value]="0" [(ngModel)]="data.info_evaluacion.cfl_capacitacion">
+                        <label class="form-check-label" for="inlineRadio2">No</label>
+                    </div>
+                    @if(data.info_evaluacion.cfl_capacitacion==1){
+                        <textarea class="form-control mt-2" id="cursosSugeridos" rows="4" placeholder="Especifique los cursos sugeridos"[(ngModel)]="data.info_evaluacion.ct_capacitacion" [value]="data.info_evaluacion.ct_capacitacion"></textarea>
+                    }
+                       
+                    </div>
+                </div>
+                <div class="row d-flex justify-content-center mt-5">
+                    <div class="col-2">
+                        <button type="button" class="btn btn-primary" (click)="guardarEvaluacion()">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                    </div>
+                </div> 
+                } @else {
+                    <div class="text-center py-4">No hay datos de evaluación disponibles</div>
+                }                                              
+            </div>
+        </div>
+       
+        <div class="tab-pane" id="messages-1" role="tabpanel">
+            <div class="mt-5">
+                <div class="col-xl-12">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                            <tr>
+                                <th style="min-width: 30px; width: 30px">#</th>
+                                <th class="text-center" style="min-width: 250px; width: 250px">Periodo</th>
+                                <th style="min-width: 100px; width: 100px">Categoria</th>
+                                <th style="min-width: 300px; width: 300px">Servicio</th>
+                                <th style="min-width: 300px; width: 300px">Cargo</th>
+                                <th class="text-center" style="width: 80px; min-width: 80px">Des.Con.lab</th>
+                                <th class="text-center" style="width: 80px; min-width: 80px">Asist.</th>
+                                <th class="text-center" style="width: 80px; min-width: 80px">Puntual.</th>
+                                <th class="text-center" style="width: 80px; min-width: 80px">Capacit.</th>
+                                <th class="text-center" style="width: 80px; min-width: 80px">Total</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.periodo"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.categoria"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.servicio"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.cargo"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                              
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @if (loading) {
+                                    <tr>
+                                        <td colspan="9" class="text-center py-3">Cargando historial...</td>
+                                    </tr>
+                                } @else {
+                                    @for (item of historial; track item.id;let i=$index) {
+                                        <tr>
+                                            <td>{{i+1}}</td>
+                                            <td class="text-center">{{ item.periodo }}</td>
+                                            <td class="text-center">{{ item.categoria }}</td>
+                                            <td>{{ item.servicio }}</td>
+                                            <td>{{ item.cargo }}</td>
+                                            <td>{{ item.puntaje_eva }}</td>
+                                            <td>{{ item.puntaje_asistencia }}</td>
+                                            <td>{{ item.puntaje_puntualidad }}</td>
+                                            <td>{{ item.puntaje_capacitacion }}</td>
+                                            <td>{{ item.total_puntos }}</td>
+                                        </tr>
+                                    } @empty {
+                                        <tr class="text-center">
+                                            <td colspan="9">No hay items que mostrar</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div> 
+                
+                <!-- Paginación simple -->
+                <div class="d-flex justify-content-between align-items-center mt-3"> 
+                    <button class="btn btn-sm btn-outline-primary" 
+                            (click)="cambioPagina(pagina - 1)" 
+                            [disabled]="pagina <= 1">
+                        Anterior
+                    </button>
+                    <span>Página {{ pagina }}</span>
+                    <button class="btn btn-sm btn-outline-primary" 
+                            (click)="cambioPagina(pagina + 1)">
+                        Siguiente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+<div id="layout-wrapper">
+    <app-header (toggleMenu)="handleToggle()"></app-header>
+    <app-sidebar></app-sidebar>
+    <div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <router-outlet></router-outlet>
+                <app-footer></app-footer>
+            </div>
+        </div>
+    </div>
+    <app-modal-login></app-modal-login>
+</div>
+

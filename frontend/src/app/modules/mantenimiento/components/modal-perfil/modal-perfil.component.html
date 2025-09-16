@@ -1,0 +1,92 @@
+<div #modalPerfil *teleportTo="'body'" class="modal fade" tabIndex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Lista Perfiles</h5>
+                <button (click)="closeModal()" aria-label="Close" class="btn-close" type="button">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <app-loading [mostrar]="loading">
+                        <div class="col-xl-12 mt-2">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center" style="width: 50px; max-width: 50px">Acción</th>
+                                        <th class="text-center" style="width: 100px; min-width: 100px">Código</th>
+                                        <th style="min-width: 350px">Descripción</th>
+                                        <th style="max-width:100px; min-width: 100px">Estado</th>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <button (click)="limpiarCampos()"
+                                                    class="btn btn-sm btn-danger waves-light waves-effect">Limpiar
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <input #inpFocus (emptied)="buscarPerfil()" (keydown.enter)="buscarPerfil()"
+                                                   [(ngModel)]="filtro.codigo"
+                                                   class="form-control form-control-sm text-center text-uppercase" inputmode="text"
+                                                   type="text">
+                                        </th>
+                                        <th>
+                                            <input (keydown.enter)="buscarPerfil()" [(ngModel)]="filtro.descripcion"
+                                                   class="form-control form-control-sm text-uppercase" inputmode="text"
+                                                   type="text">
+                                        </th>
+                                        <th>
+                                            <select (change)="buscarPerfil()"
+                                                    [(ngModel)]="filtro.estado"
+                                                    class="form-control form-control-sm text-uppercase">
+                                                <option value="1">Activo</option>
+                                                <option value="0">Anulado</option>
+                                                <option value="2">Todos</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (perfil of perfiles; track perfil.codigo) {
+                                            <tr (dblclick)="seleccionarPerfil(perfil)">
+                                                <td class="text-center">
+                                                    <button bsTooltip="Seleccionar"
+                                                            (click)="seleccionarPerfil(perfil)"
+                                                            class="btn btn-sm waves-light waves-effect btn-secondary opacity-50">
+                                                        <i class="fa fa-check"></i></button>
+                                                </td>
+                                                <td class="text-center">{{ perfil.codigo }}</td>
+                                                <td>{{ perfil.descripcion }}</td>
+                                                <td class="text-center">@if (perfil.estado === 'A') {
+                                                    <span
+                                                        class="badge rounded-pill bg-success">{{ perfil.desEstado }}</span>
+                                                } @else {
+                                                    <span
+                                                        class="badge rounded-pill bg-danger">{{ perfil.desEstado }}</span>
+                                                }</td>
+                                            </tr>
+                                        } @empty {
+                                            <tr>
+                                                <td class="text-center" [colSpan]="4">No hay
+                                                    resultados
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <app-paginado (cambioPagina)="cambiarPagina($event)" [datos]="perfiles" [longitud]="longitud"
+                                      [pagina]="pagina"></app-paginado>
+                    </app-loading>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button (click)="closeModal()" class="btn btn-danger waves-light waves-effect btn-label" type="button">
+                    Salir &ensp;<i
+                    class="fas fa-door-open label-icon"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

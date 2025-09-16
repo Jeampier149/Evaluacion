@@ -1,0 +1,76 @@
+<div #modalMenu class="modal fade" tabIndex="-1" *teleportTo="'body'">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    @if (tipo === 1) {
+                        Nuevo Menú
+                    } @else {
+                        Editar Menú ({{formulario.nombre}})
+                    }</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()">
+                </button>
+            </div>
+            <div class="modal-body">
+                <app-loading [mostrar]="loading">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <label class="form-label">Padre</label>
+                            <select #selFocus [(ngModel)]="formulario.padre"
+                                    class="form-select form-select-sm">
+                                <option [value]="''">Raíz</option>
+                                @for (menu of menus; track menu.id) {
+                                    <option [value]="menu.id">
+                                        @if (menu.padre === '') {
+                                            {{ menu.nombre }}
+                                        } @else {
+                                            {{ menu.padre + ' / ' + menu.nombre }}
+                                        }
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-10 pt-2">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" [(ngModel)]="formulario.nombre"
+                                   class="form-control form-control-sm">
+                        </div>
+                        <div class="col-xl-2 pt-2">
+                            <label class="form-label">Orden</label>
+                            <input type="number" [(ngModel)]="formulario.orden"
+                                   min="0" step="1" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-10 pt-2">
+                            <label class="form-label">Icono</label>
+                            <input type="text" [(ngModel)]="formulario.icono"
+                                   class="form-control form-control-sm">
+                        </div>
+                        <div class="col-xl-2 pt-2 align-self-end">
+                            <label class="form-label"></label>
+                            <i style="font-size: 30px" [class]="formulario.icono"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 pt-2">
+                            <label class="form-label">Ruta</label>
+                            <input type="text" [(ngModel)]="formulario.ruta"
+                                   class="form-control form-control-sm">
+                        </div>
+                    </div>
+                </app-loading>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary waves-effect waves-light btn-label" type="button"
+                        (click)="guardarMenu()">Guardar &ensp;<i
+                    class="fa-solid fa-floppy-disk label-icon"></i></button>
+                <button class="btn btn-danger waves-light waves-effect btn-label" type="button" (click)="closeModal()">
+                    Salir &ensp;<i
+                    class="fas fa-door-open label-icon"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

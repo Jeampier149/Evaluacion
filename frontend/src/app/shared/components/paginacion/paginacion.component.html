@@ -1,0 +1,30 @@
+<div class="d-flex mt-2">
+    <div class="flex-grow-1">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" [ngClass]="{'disabled':!hasAtras()}">
+                    <a class="page-link" href="#" (click)="irAnterior($event)" tabindex="-1">Atrás</a>
+                </li>
+                <li class="page-item" [ngClass]="{'disabled':!hasSiguiente()}">
+                    <a class="page-link" href="#" (click)="irSiguiente($event)">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    @if (ver) {
+        <div class="">
+            <div class="input-group">
+                <label class="input-group-text">Ver</label>
+                <select class="form-select" [(ngModel)]="longitud" (change)="cambiarCantidad()">
+                    @for (cantidad of longitudes;track cantidad) {
+
+                    } @empty {
+                        @for (cantidad of defaultLongitudes;track cantidad) {
+                            <option [value]="cantidad">{{ cantidad }}</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+    }
+</div>

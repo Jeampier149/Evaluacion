@@ -1,0 +1,39 @@
+<div #modalPass class="modal fade" tabIndex="-1" *teleportTo="'body'">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cambio de contraseña</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <label class="my-2">Nueva contraseña:</label>
+                        <input class="form-control text-uppercase" [(ngModel)]="newPass" maxLength="15"
+                               autoComplete="off" type="password" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <label class="my-2">Confirmación contraseña:</label>
+                        <input class="form-control text-uppercase" [(ngModel)]="confPass" maxLength="15"
+                               (keydown.enter)="actualizarPass()"
+                               autoComplete="off" type="password" required>
+                    </div>
+                </div>
+                <div class="form-row pt-2">
+                    <div class="col-md-12">
+                        <span class="font-weight-bold">(*) La contraseña no debe contener espacios en blanco.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success mx-2" type="button" (click)="actualizarPass()">Aceptar &ensp;<i
+                    class="fa-solid fa-floppy-disk"></i></button>
+                <button class="btn btn-danger" type="button" (click)="closeModal()">Salir &ensp;<i
+                    class="fas fa-door-open"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

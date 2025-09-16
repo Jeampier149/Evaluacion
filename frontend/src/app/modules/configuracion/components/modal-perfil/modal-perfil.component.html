@@ -1,0 +1,50 @@
+<div #modalPerfil class="modal fade" tabIndex="-1" *teleportTo="'body'">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    @if (tipo === 1) {
+                        Nuevo Perfil
+                    } @else {
+                        Editar Perfil - {{ idPerfil }}
+                    }</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()">
+                </button>
+            </div>
+            <div class="modal-body">
+                <app-loading [mostrar]="loading">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <label class="form-label">Código</label>
+                            <input type="text" [(ngModel)]="formulario.id"
+                                   class="form-control form-control-sm"
+                                   [disabled]="tipo=== 2">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 pt-2">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" [(ngModel)]="formulario.descripcion"
+                                   class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 pt-2">
+                            <label class="form-label">Observación</label>
+                            <input type="text" [(ngModel)]="formulario.observacion"
+                                   class="form-control form-control-sm">
+                        </div>
+                    </div>
+                </app-loading>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary waves-effect waves-light btn-label" type="button"
+                        (click)="guardarPerfil()">Guardar &ensp;<i
+                    class="fa-solid fa-floppy-disk label-icon"></i></button>
+                <button class="btn btn-danger waves-light waves-effect btn-label" type="button" (click)="closeModal()">
+                    Salir &ensp;<i
+                    class="fas fa-door-open label-icon"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

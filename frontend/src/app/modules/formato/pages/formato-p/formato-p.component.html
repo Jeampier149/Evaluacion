@@ -1,0 +1,89 @@
+<app-breadcrumb [rutas]="rutas" titulo="Formato"></app-breadcrumb>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-auto col-md-auto col-sm-auto">
+                        <button type="button" (click)="abrirNuevoCargo()"
+                                class="btn w-100 btn-sm btn-primary waves-light waves-effect btn-label">
+                            <i class="fa fa-file label-icon"></i> Nuevo Formato
+                        </button>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-xl-12">
+                        <app-loading [mostrar]="loading">
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th style="width: 110px; min-width: 110px">Acciones</th>
+                                                <th class="text-center" style="min-width: 150px; width: 150px">Código
+                                                </th>
+                                                <th style="min-width: 360px; width: 500px">Descripción</th>
+                                                <th class="text-center" style="width: 80px; min-width: 80px">Estado</th>
+                                            </tr>
+                                         
+                                            </thead>
+                                            <tbody>
+                                                @for (formato of formatos; track formato.id) {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex gap-1 flex-wrap">
+                                                                @if (formato.estado != '0') {
+                                                                    <button bsTooltip="Editar"
+                                                                            (click)="abrirEditarPerfil(formato.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-primary">
+                                                                        <i class="fa fa-pencil"></i></button>
+                                                                   
+                                                                    <button bsTooltip="Anular"
+                                                                            (click)="abrirAnularCargo(formato.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-danger">
+                                                                        <i class="fa fa-trash"></i></button>
+                                                                } @else {
+                                                                    <button bsTooltip="Activar"
+                                                                            (click)="abrirActivarCargo(formato.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-success">
+                                                                        <i class="fa fa-check"></i></button>
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">{{ formato.id }}</td>
+                                                        <td>{{ formato.descripcion }}</td>
+                                                        <td class="text-center">
+                                                            @if (formato.estado === '1') {
+                                                                <span class="badge rounded-pill text-bg-success">
+                                                                    {{ formato.descripcion_estado }}</span>
+                                                            } @else {
+                                                                <span class="badge rounded-pill text-bg-danger">
+                                                                    {{ formato.descripcion_estado }}</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                } @empty {
+                                                    <tr class="text-center">
+                                                        <td colspan="5">No hay items que mostrar</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> 
+                            </div>
+                            <app-paginado [datos]="formatos" [(longitud)]="longitud" [pagina]="pagina"
+                                          (cambioVer)="listarFormatoP()"
+                                          [ver]="true" (cambioPagina)="cambioPagina($event)">
+                            </app-paginado>
+                        </app-loading>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <app-modal-formato></app-modal-formato> -->
+
+

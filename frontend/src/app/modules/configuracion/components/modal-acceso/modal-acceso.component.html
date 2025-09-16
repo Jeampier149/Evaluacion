@@ -1,0 +1,100 @@
+<div #modalAcceso class="modal fade" tabIndex="-1" *teleportTo="'body'">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Accesos a {{ nombreMenu }}</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()">
+                </button>
+            </div>
+            <div class="modal-body">
+                <app-loading [mostrar]="loading">
+                    <div class="row">
+                        <div class="col-xl-4 col-md-5">
+                            <label class="form-label">Perfil</label>
+                            <div class="input-group input-group-sm">
+                                <select #selFocus [(ngModel)]="perfil" class="form-select form-select-sm">
+                                    @for (perfilS of perfiles; track perfilS.id) {
+                                        <option [value]="perfilS.id">{{ perfilS.id }}</option>
+                                    }
+                                </select>
+                                <button bsTooltip="Agregar" (click)="agregarAcceso()"
+                                        class="btn btn-sm btn-success waves-light waves-effect">
+                                    <i class="fa fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 40px; min-width: 40px">Acciones</th>
+                                        <th style="min-width: 200px; width: 130px">Menu
+                                        </th>
+                                        <th style="min-width: 300px; width: 300px">Perfil</th>
+                                        <th class="text-center" style="width: 80px; min-width: 80px">Estado</th>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <button type="button" (click)="limpiarFiltros()"
+                                                    class="btn btn-sm w-100 btn-danger waves-effect waves-light">
+                                                Limpiar
+                                            </button>
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <input type="text" [(ngModel)]="filtros.idPerfil"
+                                                   inputmode="text"
+                                                   (keydown.enter)="filtrarUsuarios()"
+                                                   class="form-control form-control-sm text-uppercase">
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (acceso of accesos; track acceso.id) {
+                                            <tr>
+                                                <td class="text-center">
+                                                    <button bsTooltip="Anular"
+                                                            (click)="abrirAnularAcceso(acceso.menu, acceso.perfil)"
+                                                            class="btn btn-sm waves-light waves-effect btn-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                                <td>{{ acceso.nombre_menu }}</td>
+                                                <td>{{ acceso.perfil }}</td>
+                                                <td class="text-center">
+                                                    @if (acceso.estado === 'A') {
+                                                        <span class="badge rounded-pill text-bg-success">
+                                                                    {{ acceso.descripcion_estado }}</span>
+                                                    } @else {
+                                                        <span class="badge rounded-pill text-bg-danger">
+                                                                    {{ acceso.descripcion_estado }}</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        } @empty {
+                                            <tr class="text-center">
+                                                <td colspan="4">No hay items que mostrar</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <app-paginado [datos]="accesos" [(longitud)]="longitud" [pagina]="pagina"
+                                  (cambioVer)="listarAccesos()"
+                                  [ver]="true" (cambioPagina)="cambioPagina($event)">
+                    </app-paginado>
+                </app-loading>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger waves-light waves-effect btn-label" type="button" (click)="closeModal()">
+                    Salir &ensp;<i
+                    class="fas fa-door-open label-icon"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

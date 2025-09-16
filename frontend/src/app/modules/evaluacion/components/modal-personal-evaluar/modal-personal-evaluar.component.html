@@ -1,0 +1,120 @@
+<div #modalEmpleadoEvaluarNuevo class="modal fade" tabIndex="-1" *teleportTo="'body'">
+    <div class="modal-dialog  modal-dialog-centered modal-xl " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Lista de Empleados </h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()">
+                </button>
+            </div>
+            <div class="modal-body">
+                <app-loading [mostrar]="loading">
+                            <div class="card-body">
+<div class="col-xl-12">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                            <tr>
+                               
+                                <th style="min-width: 30px; width: 30px">Acciones</th>
+                                <th class="text-center" style="min-width: 200px; width: 200px">Apellidos</th>
+                                <th class="text-center" style="min-width: 200px; width: 200px">Nombres</th>
+                                <th style="min-width: 100px; width: 100px">Categoria</th>
+                                <th style="min-width: 200; width: 200px">Servicio</th>
+                                <th style="min-width: 200px; width: 200px">Cargo</th>
+
+                            </tr>
+                            <tr> 
+                                <td>
+                                    <button type="button" (click)="toggleSeleccionTodos()"
+                                                    class="btn btn-sm w-100 waves-effect waves-light"
+                                                    [class.btn-success]="!todosSeleccionados"
+                                                    [class.btn-warning]="todosSeleccionados">
+                                                    {{ todosSeleccionados ? 'Deseleccionar Todos' : 'Seleccionar Todos' }}
+                                                </button>
+                                                <button type="button" (click)="limpiarCampos()"
+                                                    class="btn btn-sm w-100 btn-danger waves-effect waves-light mt-1">
+                                                    X
+                                                </button>
+                                       <!-- aca debe haber un boton para q seleecicon todo -->
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.apellidos"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                   <td>
+                                    <input type="text" [(ngModel)]="filtros.nombre"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.categoria"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.servicio"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.cargo"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                              
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @if (loading) {
+                                    <tr>
+                                        <td colspan="9" class="text-center py-3">Cargando lista...</td>
+                                    </tr>
+                                } @else {
+                                    @for (item of data; track item.id;let i=$index) {
+                               
+                                            <tr>
+                                            <td>   <button type="button" 
+                                                            class="btn btn-sm w-100 waves-effect waves-light"
+                                                            [class.btn-success]="!estaSeleccionado(item.id)"
+                                                            [class.btn-warning]="estaSeleccionado(item.id)"
+                                                            (click)="toggleSeleccionEmpleado(item.id)">
+                                                            {{ estaSeleccionado(item.id) ? 'Quitar' : 'Seleccionar' }}
+                                                        </button></td> 
+                                           
+                                            <td >{{ item.apellidos }}</td>
+                                            <td >{{ item.nombre }}</td>
+                                            <td >{{ item.categoria }}</td>
+                                            <td>{{ item.servicio }}</td>
+                                            <td>{{ item.cargo }}</td>
+
+                                        </tr>
+                                        
+                                        
+                                    } @empty {
+                                        <tr class="text-center">
+                                            <td colspan="9">No hay items que mostrar</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>         
+ </div>
+                         <app-paginado [datos]="data" [(longitud)]="longitud" [pagina]="pagina"
+                                          (cambioVer)=" listarEmpleadosNuevos()"
+                                          [ver]="true" (cambioPagina)="cambioPagina($event)">
+                            </app-paginado>              
+                </app-loading>
+            </div>
+          
+        </div>
+    </div>
+</div>
+

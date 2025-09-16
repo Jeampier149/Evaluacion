@@ -1,0 +1,181 @@
+<div #modalCargo class="modal fade" tabIndex="-1" *teleportTo="'body'">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    @if (tipo === 1) {
+                        Nuevo Empleado
+                    } @else {
+                        Editar Empleado - {{ idCargo }}
+                    }</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()">
+                </button>
+            </div>
+            <div class="modal-body">
+                <app-loading [mostrar]="loading">
+                    <div class="row mb-2">
+                        <div class="col-4">
+                          <label class="form-label">Codigo Plaza</label>
+                            <input type="text" [(ngModel)]="formulario.id"
+                                   class="form-control form-control-sm" >
+                        </div>      
+                       
+                        <div class="col-4">
+                          <label class="form-label">Sexo</label>
+                            <select class="form-select form-select-sm" aria-label="Default select example">
+                                <option value="1">Masculino</option>
+                                <option value="2">Femenino</option>
+                            </select>
+                        </div>                     
+                    </div>
+                      <div class="row mb-2">
+                        <div class="col-4">
+                          <label class="form-label">Tipo Doc</label>
+                         <select class="form-select form-select-sm" aria-label="Default select example">
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                        </select>
+                        </div>  
+                          <div class="col-4">
+                          <label class="form-label">N°Documento</label>
+                            <input type="text" [(ngModel)]="formulario.id"
+                                   class="form-control form-control-sm" >
+                        </div>  
+                         <div class="col-4">
+                          <label class="form-label">Fecha Nacimiento</label>
+                            <input type="date" [(ngModel)]="formulario.id"
+                                   class="form-control form-control-sm" >
+                        </div>                     
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4">
+                          <label class="form-label">Nombres</label>
+                            <input type="text" [(ngModel)]="formulario.id"
+                                   class="form-control form-control-sm" >
+                        </div> 
+                         <div class="col-4">
+                          <label class="form-label">Apellido Paterno</label>
+                            <input type="text" [(ngModel)]="formulario.id"
+                                   class="form-control form-control-sm" >
+                        </div> 
+                         <div class="col-4">
+                          <label class="form-label">Apellido Materno</label>
+                            <input type="text" [(ngModel)]="formulario.id"
+                                   class="form-control form-control-sm" >
+                        </div> 
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                          <label class="form-label">Correo</label>
+                            <input type="text" [(ngModel)]="formulario.id"
+                                   class="form-control form-control-sm" >
+                        </div> 
+                    </div>
+                    <div class="row mb-2">
+                          <div class="col-4">
+                          <label class="form-label">Fecha Ingreso</label>
+                            <input type="date" [(ngModel)]="formulario.id"
+                                   class="form-control form-control-sm" >
+                        </div> 
+                    </div>
+                     <div class="row mb-2">
+                        <div class="col-6">
+                          <label class="form-label">Unidad Organica</label>
+                            <ng-select  [(ngModel)] ="formulario.unidad"
+                                                          [items]="unidades"
+                                                                bindLabel ="nombre" 
+                                                                bindValue ="id" 
+																[clearable]="false" 
+                                                                dropdownPosition="top"
+                                                                class="d-block form-control "
+                                                                style="font-size: 0.8rem; height: auto; "                           
+																> 																														  
+                                </ng-select >	
+                        </div> 
+                         <div class="col-6">
+                          <label class="form-label">Servicio</label>
+                            <ng-select  [(ngModel)] ="formulario.servicio"
+                                                          [items]="servicios"
+                                                                bindLabel ="nombre" 
+                                                                bindValue ="id" 
+																[clearable]="false" 
+                                                                dropdownPosition="top"
+                                                                class="d-block form-control "
+                                                                style="font-size: 0.8rem; height: auto; "                           
+																> 																														  
+                                </ng-select >	
+                        </div> 
+                       
+                    </div>
+                    <div class="row">
+                        <div class="col-3">
+                          <label class="form-label">Formato</label>
+                                 <ng-select  [(ngModel)] ="formulario.formato"
+                                                          [items]="formatos"
+                                                                bindLabel ="nombre" 
+                                                                bindValue ="id" 
+																[clearable]="false" 
+                                                                dropdownPosition="top"
+                                                                class="d-block form-control "
+                                                                style="font-size: 0.8rem; height: auto; "                           
+																> 																														  
+                                </ng-select >	
+                        </div> 
+                         <div class="col-3">
+                          <label class="form-label">Condicion Laboral</label>
+                           <ng-select  [(ngModel)] ="formulario.formato"
+                                                          [items]="formatos"
+                                                                bindLabel ="nombre" 
+                                                                bindValue ="id" 
+																[clearable]="false" 
+                                                                dropdownPosition="top"
+                                                                class="d-block form-control "
+                                                                style="font-size: 0.8rem; height: auto; "                           
+																> 																														  
+                                </ng-select >	
+                        </div> 
+                         <div class="col-3">
+                          <label class="form-label">Cargo</label>
+                            <ng-select  [(ngModel)] ="formulario.formato"
+                                                          [items]="formatos"
+                                                                bindLabel ="nombre" 
+                                                                bindValue ="id" 
+																[clearable]="false" 
+                                                                dropdownPosition="top"
+                                                                class="d-block form-control "
+                                                                style="font-size: 0.8rem; height: auto; "                           
+																> 																														  
+                                </ng-select >	
+                        </div> 
+                        <div class="col-3">
+                          <label class="form-label">Nivel Admin.</label>
+                            <ng-select  [(ngModel)] ="formulario.nivel"
+                                                          [items]="niveles"
+                                                                bindLabel ="nombre" 
+                                                                bindValue ="id" 
+																[clearable]="false" 
+                                                                dropdownPosition="top"
+                                                                class="d-block form-control "
+                                                                style="font-size: 0.8rem; height: auto; "                           
+																> 																														  
+                                </ng-select >	
+                        </div> 
+                    </div>
+                    
+                    
+                  
+                    
+                </app-loading>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary waves-effect waves-light btn-label" type="button"
+                        (click)="guardarCargo()">Guardar &ensp;<i
+                    class="fa-solid fa-floppy-disk label-icon"></i></button>
+                <button class="btn btn-danger waves-light waves-effect btn-label" type="button" (click)="closeModal()">
+                    Salir &ensp;<i
+                    class="fas fa-door-open label-icon"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

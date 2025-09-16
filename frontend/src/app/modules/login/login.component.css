@@ -1,0 +1,15 @@
+@import "../../../css/spinner.css";
+.bg-prim{
+    background-color: rgb(66, 169, 253);
+    color: white;
+}
+.bg-prim:hover {
+     color: #fff; /* Color del texto al pasar el cursor */
+    background-color: #0069d9; /* Color de fondo al pasar el cursor */ 
+    border-color: #0062cc; /* Color del borde al pasar el cursor */ 
+} 
+.bg-prim:focus, .btn-primary.focus 
+{ color: #fff; 
+    background-color: 
+    #0069d9; border-color: 
+    #0062cc; box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); }/*} Sombra al enfocar */

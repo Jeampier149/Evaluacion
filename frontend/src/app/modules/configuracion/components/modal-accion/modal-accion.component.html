@@ -1,0 +1,92 @@
+<div #modalAccion class="modal fade" tabIndex="-1" *teleportTo="'body'">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Acciones de Menú ({{ nombreMenu }})
+                </h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row pt-2">
+                    <div class="col-xl-12">
+                        <app-loading [mostrar]="loading">
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th style="width: 50px; min-width: 50px">Acción</th>
+                                                <th style="min-width: 10px">ID</th>
+                                                <th style="min-width: 260px">Descripción</th>
+                                                <th class="text-center" style="width: 80px; min-width: 80px">Estado</th>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <button type="button" bsTooltip="Agregar"
+                                                            (click)="guardarAccion()"
+                                                            class="btn btn-sm w-100 btn-success waves-effect waves-light">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </td>
+                                                <td></td>
+                                                <td>
+                                                    <input #inpFocus type="text" [(ngModel)]="formulario.descripcion"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (accion of acciones; track accion.id) {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex gap-1 flex-wrap">
+                                                                @if (accion.estado !== '*') {
+                                                                    <button bsTooltip="Anular"
+                                                                            (click)="abrirAnularAccion(accion.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-danger">
+                                                                        <i class="fa fa-trash"></i></button>
+                                                                } @else {
+                                                                    <button bsTooltip="Activar"
+                                                                            class="btn btn-sm waves-light waves-effect btn-success">
+                                                                        <i class="fa fa-check"></i></button>
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ accion.id }}</td>
+                                                        <td>{{ accion.descripcion }}</td>
+                                                        <td class="text-center">
+                                                            @if (accion.estado === 'A') {
+                                                                <span class="badge rounded-pill text-bg-success">
+                                                                    Activo</span>
+                                                            } @else {
+                                                                <span class="badge rounded-pill text-bg-danger">
+                                                                    Anulado</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                } @empty {
+                                                    <tr class="text-center">
+                                                        <td colspan="4">No hay items que mostrar</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </app-loading>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger waves-light waves-effect btn-label" type="button" (click)="closeModal()">
+                    Salir &ensp;<i
+                    class="fas fa-door-open label-icon"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

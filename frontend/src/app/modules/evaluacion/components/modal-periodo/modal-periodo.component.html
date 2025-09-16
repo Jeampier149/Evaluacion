@@ -1,0 +1,174 @@
+<div #modalPersonalEvaluarNuevo class="modal fade" tabIndex="-1" *teleportTo="'body'">
+    <div class="modal-dialog  modal-dialog-centered " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    @if (tipo === 1) {
+                        Nuevo Periodo
+                    } @else {
+                        Editar Periodo - {{ idPeriodo }}
+                    }</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()">
+                </button>
+            </div>
+            <div class="modal-body">
+                <app-loading [mostrar]="loading">
+                            <div class="card-body">
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link active" data-bs-toggle="tab" href="#home" role="tab" aria-selected="true">
+                                                    <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                                    <span class="d-none d-sm-block">Datos Periodo</span>    
+                                                </a>
+                                            </li>
+                                            @if (tipo === 2) {
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link" data-bs-toggle="tab" href="#profile" role="tab" aria-selected="false" tabindex="-1">
+                                                    <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                                    <span class="d-none d-sm-block">Asignar Formatos</span>    
+                                                </a>
+                                            </li>
+                                        }
+                                           
+                                        </ul>
+        
+                                        <!-- Tab panes -->
+                                        <div class="tab-content p-3 text-muted">
+                                            <div class="tab-pane active show" id="home" role="tabpanel">
+                                                <div class="row mt-1">
+                                                        <div class="col-xl-12">
+                                                            <label class="form-label">Año</label>
+                                                           <select class="form-select form-select-sm" aria-label=".form-select-sm example"[(ngModel)]="formulario.ano" (change)="generarNombre()">
+                                                                   <option value="">Selecciona un Año</option>
+                                                                    <option value="2025">2025</option>
+                                                                    <option value="2026">2026</option>
+                                                                    <option value="2027">2027</option>
+                                                                    <option value="2028">2028</option>
+                                                                    <option value="2029">2028</option>
+                                                                    <option value="2030">2029</option>
+                                                                    <option value="2031">2030</option>
+
+   
+                                                            </select>
+                                                        </div>
+                                                </div>
+                                
+                                                   <div class="row mt-1">
+                                                        <div class="col-xl-12">
+                                                            <label class="form-label">Semestre</label>
+                                                            <select class="form-select form-select-sm" aria-label=".form-select-sm example" [(ngModel)]="formulario.semestre" (change)="generarNombre()">
+                                                                    <option value="Primer Semestre">Primer Semestre</option>
+                                                                    <option value="Segundo Semestre">Segundo Semestre</option>
+   
+                                                            </select>
+                                                        </div>
+                                                </div>
+                                                   <div class="row mt-1">
+                                                        <div class="col-xl-12">
+                                                            <label class="form-label">Nombre</label>
+                                                            <input type="text" [(ngModel)]="formulario.nombre" [value]="generarNombre()"
+                                                                class="form-control form-control-sm"
+                                                                [disabled]="tipo=== 2">
+                                                        </div>
+                                                </div>
+                                                   <div class="row mt-1">
+                                                        <div class="col-xl-12">
+                                                             <label class="form-label">Desde</label>
+                                                           <select class="form-select form-select-sm" aria-label=".form-select-sm example" [(ngModel)]="formulario.desde">
+                                                                   <option value="">Selecciona un mes</option>
+                                                                    <option value="01">Enero</option>
+                                                                    <option value="02">Febrero</option>
+                                                                    <option value="03">Marzo</option>
+                                                                    <option value="04">Abril</option>
+                                                                    <option value="05">Mayo</option>
+                                                                    <option value="06">Junio</option>
+                                                                    <option value="07">Julio</option>
+                                                                    <option value="08">Agosto</option>
+                                                                    <option value="09">Setiembre</option>
+                                                                    <option value="10">Octubre</option>
+                                                                    <option value="11">Noviembre</option>
+                                                                    <option value="12">Diciembre</option>
+
+   
+                                                            </select>
+                                                        </div>
+                                                </div>
+                                                  <div class="row mt-1">
+                                                        <div class="col-xl-12">
+                                                             <label class="form-label">Hasta</label>
+                                                           <select class="form-select form-select-sm" aria-label=".form-select-sm example" [(ngModel)]="formulario.hasta">
+                                                                   <option value="">Selecciona un mes</option>
+                                                                    <option value="01">Enero</option>
+                                                                    <option value="02">Febrero</option>
+                                                                    <option value="03">Marzo</option>
+                                                                    <option value="04">Abril</option>
+                                                                    <option value="05">Mayo</option>
+                                                                    <option value="06">Junio</option>
+                                                                    <option value="07">Julio</option>
+                                                                    <option value="08">Agosto</option>
+                                                                    <option value="09">Setiembre</option>
+                                                                    <option value="10">Octubre</option>
+                                                                    <option value="11">Noviembre</option>
+                                                                    <option value="12">Diciembre</option>
+
+   
+                                                            </select>
+                                                        </div>
+                                                </div>
+                                                <div class="row mt-1">
+                                                        <div class="col-xl-12">
+                                                            <label class="form-label">Dividir</label>
+                                                            <input type="text" [(ngModel)]="formulario.dividir"
+                                                                class="form-control form-control-sm"
+                                                                [disabled]="tipo=== 2">
+                                                        </div>
+                                                </div>
+                                                <div class="row mt-1">
+                                                        <div class="col-xl-12">
+                                                            <label class="form-label">Multiplicar</label>
+                                                            <input type="text" [(ngModel)]="formulario.multiplicar"
+                                                                class="form-control form-control-sm"
+                                                                [disabled]="tipo=== 2">
+                                                        </div>
+                                                </div>
+                                                <div class="row mt-1">
+                                                        <div class="col-xl-12">
+                                                            <label class="form-label">Factor Asistencia</label>
+                                                            <input type="text" [(ngModel)]="formulario.factor_asistencia"
+                                                                class="form-control form-control-sm"
+                                                                [disabled]="tipo=== 2">
+                                                        </div>
+                                                </div>
+                                                  <div class="modal-footer mt-4">
+                                                    <button class="btn btn-primary waves-effect waves-light btn-label" type="button"
+                                                            (click)="guardarPeriodo()">Guardar &ensp;<i
+                                                        class="fa-solid fa-floppy-disk label-icon"></i></button>
+                                                    <button class="btn btn-danger waves-light waves-effect btn-label" type="button" (click)="closeModal()">
+                                                        Salir &ensp;<i
+                                                        class="fas fa-door-open label-icon"></i></button>
+                                                  </div>
+                                            </div>
+                           @if (tipo === 2) {
+                                            <div class="tab-pane" id="profile" role="tabpanel">
+                                                <p class="mb-0">
+                                                    Food truck fixie locavore, accusamus mcsweeney's marfa nulla
+                                                    single-origin coffee squid. Exercitation +1 labore velit, blog
+                                                    sartorial PBR leggings next level wes anderson artisan four loko
+                                                    farm-to-table craft beer twee. Qui photo booth letterpress,
+                                                    commodo enim craft beer mlkshk aliquip jean shorts ullamco ad
+                                                    vinyl cillum PBR. Homo nostrud organic, assumenda labore
+                                                    aesthetic magna delectus.
+                                                </p>
+                                            </div>
+                                        }
+                                           
+                                        </div>
+                                    </div>
+                                      
+                </app-loading>
+            </div>
+          
+        </div>
+    </div>
+</div>

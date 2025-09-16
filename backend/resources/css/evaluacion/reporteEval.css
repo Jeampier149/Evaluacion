@@ -1,0 +1,29 @@
+body { font-family: Arial, sans-serif; font-size: 10px; }
+                .header { text-align: center; margin-bottom: 20px; }
+                .header h2 { margin: 0; font-size: 16px; }
+                table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+                table, th, td { border: 1px solid black; }
+                th, td { padding: 5px; text-align: left; }
+                .text-center { text-align: center; }
+                .text-right { text-align: right; }
+                .bold { font-weight: bold; }
+                .signature-line { border-bottom: 1px solid black; width: 300px; display: inline-block; }
+                .footer { margin-top: 20px; }
+                .factor-name { font-weight: bold; }
+                .factor-desc { font-style: italic; font-size: 11px; }
+
+
+.enc {
+    border-collapse: collapse;
+    border: none;
+}
+
+.enc tr  td {
+    border: none;
+    padding: 2px;
+    line-height: 1.2; /* Reduce altura de línea del texto */
+}
+.ct  tr th {
+    text-align: center;
+}
+

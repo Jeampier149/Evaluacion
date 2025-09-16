@@ -1,0 +1,114 @@
+<app-breadcrumb [rutas]="rutas" titulo="Perfil"></app-breadcrumb>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-auto col-md-auto col-sm-auto">
+                        <button type="button" (click)="abrirNuevoPerfil()"
+                                class="btn w-100 btn-sm btn-primary waves-light waves-effect btn-label">
+                            <i class="fa fa-file label-icon"></i> Nuevo Perfil
+                        </button>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-xl-12">
+                        <app-loading [mostrar]="loading">
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th style="width: 110px; min-width: 110px">Acciones</th>
+                                                <th class="text-center" style="min-width: 150px; width: 150px">Código
+                                                </th>
+                                                <th style="min-width: 360px; width: 500px">Descripción</th>
+                                                <th style="min-width: 260px">Observación</th>
+                                                <th class="text-center" style="width: 80px; min-width: 80px">Estado</th>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <button type="button" (click)="limpiarFiltros()"
+                                                            class="btn btn-sm w-100 btn-danger waves-effect waves-light">
+                                                        Limpiar
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <input #inpFocus type="text" [(ngModel)]="filtros.id"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarPerfil()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                <td>
+                                                    <input type="text" [(ngModel)]="filtros.descripcion"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarPerfil()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (perfil of perfiles; track perfil.id) {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex gap-1 flex-wrap">
+                                                                @if (perfil.estado !== '*') {
+                                                                    <button bsTooltip="Editar"
+                                                                            (click)="abrirEditarPerfil(perfil.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-primary">
+                                                                        <i class="fa fa-pencil"></i></button>
+                                                                    <button bsTooltip="Usuarios"
+                                                                            (click)="abrirModalPerfilUsuario(perfil.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-dark">
+                                                                        <i class="fa fa-user"></i></button>
+                                                                    <button bsTooltip="Anular"
+                                                                            (click)="abrirAnularPerfil(perfil.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-danger">
+                                                                        <i class="fa fa-trash"></i></button>
+                                                                } @else {
+                                                                    <button bsTooltip="Activar"
+                                                                            (click)="abrirActivarPerfil(perfil.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-success">
+                                                                        <i class="fa fa-check"></i></button>
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">{{ perfil.id }}</td>
+                                                        <td>{{ perfil.descripcion }}</td>
+                                                        <td>{{ perfil.observacion }}</td>
+                                                        <td class="text-center">
+                                                            @if (perfil.estado === 'A') {
+                                                                <span class="badge rounded-pill text-bg-success">
+                                                                    {{ perfil.descripcion_estado }}</span>
+                                                            } @else {
+                                                                <span class="badge rounded-pill text-bg-danger">
+                                                                    {{ perfil.descripcion_estado }}</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                } @empty {
+                                                    <tr class="text-center">
+                                                        <td colspan="5">No hay items que mostrar</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <app-paginado [datos]="perfiles" [(longitud)]="longitud" [pagina]="pagina"
+                                          (cambioVer)="listarPerfil()"
+                                          [ver]="true" (cambioPagina)="cambioPagina($event)">
+                            </app-paginado>
+                        </app-loading>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<app-modal-perfil></app-modal-perfil>
+<app-modal-perfil-usuario></app-modal-perfil-usuario>

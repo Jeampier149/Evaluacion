@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">{{titulo}}</h4>
+
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li *ngFor="let ruta of rutas; last as last" class="breadcrumb-item" [ngClass]="{'active' : last}">
+                        <ng-template [ngIf]="!last" [ngIfElse]="pagina">
+                            <a routerLink="{{ruta.ruta!}}">
+                                {{ruta.nombre}}
+                            </a>
+                        </ng-template>
+                        <ng-template #pagina>
+                            {{ruta.nombre}}
+                        </ng-template>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>

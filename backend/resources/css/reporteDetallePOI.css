@@ -1,0 +1,44 @@
+
+table {
+    border: 1px solid black;
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 9px;
+    text-transform: uppercase;
+}
+th, td {
+    border: 1px solid black; /* Borde para celdas */
+    padding: 5px;
+    text-align: center;
+    text-transform: uppercase;
+}
+thead tr td{
+    font-weight: bold;
+}
+P{
+    font-size: 10px;
+    
+}
+.pegantina{
+    width: 60%;
+    height: 35px;
+}
+.logo{
+    text-align: right;
+    border :none;
+}
+.pega{
+    text-align: left;
+    border: none;
+}
+.encabezado {
+    border:none
+}
+.perfil{
+    max-height: 140px;
+    width: 170px;
+    border: 7px solid #e6e6e68f;
+    margin-bottom: 15px;
+    box-shadow: 0 0 5px rgba(108, 82, 240, 0.3);
+
+}

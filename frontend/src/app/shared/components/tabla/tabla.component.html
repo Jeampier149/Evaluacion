@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="col-xl-12">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <thead>
+                <tr>
+                    <th *ngFor="let cabecera of cabeceras;" class="{{cabecera.clase}}"
+                        style="{{cabecera.estilo}}">{{cabecera.nombre}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <ng-container *ngFor="let dato of datos" [ngTemplateOutlet]="template"
+                              [ngTemplateOutletContext]="{dato : dato}">
+                </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,147 @@
+
+<app-breadcrumb [rutas]="rutas" titulo="Personal a Evaluar"></app-breadcrumb>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row d-flex justify-content-between">
+
+                    <div class="col-4">
+                        <div class="col-12">
+                            <div class="input-group input-group-sm">
+                                     <span class="input-group-text text-uppercase"><b>Periodo</b></span>
+                                         <select class="form-select form-select-sm text-uppercase" [(ngModel)]="filtros.periodo" (change)="cambiarFiltroPeriodo()">
+                                             @for (periodo of periodos; track periodo.id) {
+                                                        <option  [value]="periodo.id">{{ periodo.descripcion }}</option>
+                                                    }
+                                        </select>
+                            </div>
+                        </div>
+                            
+                    </div>
+                    <div class="col-4 d-flex">
+                        <div class="mx-2" ><button class="btn  btn-sm btn-primary waves-light waves-effect btn-label" (click)="abrirNuevoPersonalEvaluar()"><i class="fa fa-filter label-icon"></i> Personal a Evaluar </button></div>
+                        <div ><button class="btn  btn-sm btn-primary waves-light waves-effect btn-label"><i class="fas fa-redo-alt label-icon" ></i> Revisor y Evaluador </button></div>
+                    </div>
+                    
+                </div>
+                <div class="row pt-4">
+                    <div class="col-xl-12">
+                        <app-loading [mostrar]="loading"> 
+                            <div class="row">
+      <div class="mt-5">
+                <div class="col-xl-12">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                            <tr>
+                                <th style="min-width: 30px; width: 30px">#</th>
+                                <th class="text-center" style="min-width: 250px; width: 250px">Apellidos</th>
+                                <th class="text-center" style="min-width: 250px; width: 250px">Nombres</th>
+                                <th style="min-width: 100px; width: 100px">Categoria</th>
+                                <th style="min-width: 300px; width: 300px">Servicio</th>
+                                <th style="min-width: 300px; width: 300px">Cargo</th>
+                                <th style="min-width: 300px; width: 300px">Estado</th>
+                                <th class="text-center" style="width: 80px; min-width: 80px">Des.Con.lab</th>
+                                <th class="text-center" style="width: 80px; min-width: 80px">Asist.</th>
+                                <th class="text-center" style="width: 80px; min-width: 80px">Puntual.</th>
+                                <th class="text-center" style="width: 80px; min-width: 80px">Capacit.</th>
+                                <th class="text-center" style="width: 80px; min-width: 80px">Total</th>
+                            </tr>
+                            <tr> 
+                                <td></td>
+                            
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.apellidos"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                   <td>
+                                    <input type="text" [(ngModel)]="filtros.nombre"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.categoria"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.servicio"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                <td>
+                                    <input type="text" [(ngModel)]="filtros.cargo"
+                                        inputmode="text"
+                                        (keydown.enter)="filtrarEmpleado()"
+                                        class="form-control form-control-sm text-uppercase">
+                                </td>
+                                <td>
+
+                                </td>
+                              
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @if (loading) {
+                                    <tr>
+                                        <td colspan="9" class="text-center py-3">Cargando lista...</td>
+                                    </tr>
+                                } @else {
+                                    @for (item of historial; track item.id;let i=$index) {
+                                        @if(item.apellidos!=null){
+                                            <tr>
+                                            <td>{{i+1}}</td>
+                                            <td >{{ item.apellidos }}</td>
+                                            <td >{{ item.nombre }}</td>
+                                            <td >{{ item.categoria }}</td>
+                                            <td>{{ item.servicio }}</td>
+                                            <td>{{ item.cargo }}</td>
+                                            <td>{{ item.ct_nombre_corto }}</td>
+                                            <td>{{ item.puntaje_eva }}</td>
+                                            <td>{{ item.puntaje_asistencia }}</td>
+                                            <td>{{ item.puntaje_puntualidad }}</td>
+                                            <td>{{ item.puntaje_capacitacion }}</td>
+                                            <td>{{ item.total_puntos }}</td>
+                                        </tr>
+                                        }
+                                        
+                                    } @empty {
+                                        <tr class="text-center">
+                                            <td colspan="9">No hay items que mostrar</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div> 
+                
+
+            </div>
+
+                            </div>
+                            <app-paginado [datos]="historial" [(longitud)]="longitud" [pagina]="pagina"
+                                          (cambioVer)=" listarEmpleados()"
+                                          [ver]="true" (cambioPagina)="cambioPagina($event)">
+                            </app-paginado>
+                        </app-loading>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <app-modal-personal-evaluar></app-modal-personal-evaluar>
+</div>
+
+
+
+
+
+
+    

@@ -1,0 +1,66 @@
+<div class="vertical-menu bg-white " style="    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);">
+
+    <div data-simplebar class="h-100">
+
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+            <!-- Left Menu Start -->
+            <ul class="metismenu list-unstyled" id="side-menu">
+                <li>
+                    <a routerLink="/inicio">
+                        <i class="fa-solid fa-house" style="font-size: 16px;"></i>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+
+                <li class="menu-title">Menu</li>
+
+                <li *ngFor="let menu of base;">
+                    <ng-template [ngIf]="validarHijos(menu['CODIGO'])" [ngIfElse]=nivel1>
+                       
+                            <a href="#" (click)="$event.preventDefault()" class="has-arrow">
+                                <i class="{{menu['ICONO']}}" style="font-size: 16px;"></i>
+                                <span>{{menu['NOMBRE']}}</span>
+
+                            </a>
+                        
+                       
+                        <ul class="sub-menu" aria-expanded="false">
+                            <li *ngFor="let subMenu of obtenerHijos(menu['CODIGO'])">
+                                <ng-template [ngIf]="validarHijos(subMenu['CODIGO'])" [ngIfElse]=nivel2>
+                                  
+                                    <a href="#" (click)="$event.preventDefault()" class="has-arrow">
+                                       
+                                        <span>{{subMenu['NOMBRE']}}</span>
+                                    </a>
+                                    <ul class="sub-menu" aria-expanded="false">
+                                        <li *ngFor="let subMenu2 of obtenerHijos(subMenu['CODIGO'])">
+                                            <a href="#" (click)="irARuta($event, subMenu2['RUTA'])">
+                                                <span>{{subMenu2['NOMBRE']}}</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                
+                                </ng-template>
+                                <ng-template #nivel2>
+                                    <a href="#" (click)="irARuta($event, subMenu['RUTA'])">
+                                        <span>{{subMenu['NOMBRE']}}</span>
+                                    </a>
+                                </ng-template>
+                            </li>
+                        </ul>
+                    </ng-template>
+                    <ng-template #nivel1>
+                        @if(menu['NOMBRE']!='Inicio'){
+                        <a href="#" (click)="irARuta($event, menu['RUTA'])">
+                            <i class="{{menu['ICONO']}}"></i>
+                            <span>{{menu['NOMBRE']}}</span>
+                        </a>
+                    }
+                    </ng-template>
+                </li>
+            </ul>
+        </div>
+        <!-- Sidebar -->
+    </div>
+</div>

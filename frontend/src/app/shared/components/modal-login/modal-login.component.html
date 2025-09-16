@@ -1,0 +1,85 @@
+<div #modalLogin class="modal fade" tabIndex="-1" *teleportTo="'body'">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Iniciar Sesión</h5>
+            </div>
+            <div class="modal-body">
+                <div #carouselLogin class="carousel slide">
+                    <app-loading [mostrar]="loading">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class="alert alert-warning" role="alert">
+                                    Su sesión esta a punto de expirar. Por favor, ingrese sus credenciales para
+                                    continuar.
+                                </div>
+                                <div class="row">
+                                    <div class="col-xl-12" [formGroup]="loginForm!">
+                                        <label class="label">Usuario</label>
+                                        <input bsInvalid formControlName="usuario"
+                                               #inpFocus
+                                               class="form-control form-control-sm text-uppercase"
+                                               (keydown.enter)="inpPass.focus()"
+                                               type="text"
+                                               required>
+                                        <div class="invalid-feedback">
+                                            Campo obligatorio
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12" [formGroup]="loginForm!">
+                                        <label class="label">Contrase&ntilde;a</label>
+                                        <input bsInvalid #inpPass formControlName="password"
+                                               class="form-control form-control-sm" type="password"
+                                               (keydown.enter)="iniciarSesion()"
+                                               required>
+                                        <div class="invalid-feedback">
+                                            Campo obligatorio
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                            
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="my-2">Nueva contraseña:</label>
+                                        <input (keydown.enter)="inpConfPass.focus()"
+                                               class="form-control form-control-sm text-uppercase" maxLength="15"
+                                               [(ngModel)]="newPass"
+                                               autoComplete="off" type="password" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="my-2">Confirmación contraseña:</label>
+                                        <input #inpConfPass
+                                               (keydown.enter)="actualizarPass()"
+                                               [(ngModel)]="confPass"
+                                               class="form-control form-control-sm text-uppercase" maxLength="15"
+                                               autoComplete="off" type="password" required>
+                                    </div>
+                                </div>
+                                <div class="row pt-2">
+                                    <div class="col-md-12">
+                                        <span class="font-weight-bold">(*) La contraseña no debe contener espacios en blanco.</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                    
+                        </div>
+                    </app-loading>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary waves-light waves-effect btn-label" type="button"
+                        [disabled]="loginForm?.invalid"
+                        (click)="iniciarSesion()">
+                    {{ accion === 1 ? 'Iniciar Sesión' : 'Actualizar Contraseña' }}&ensp;<i
+                    class="fas fa-user label-icon"></i></button>
+                <button class="btn btn-danger waves-light waves-effect btn-label" type="button" (click)="closeModal()">
+                    Salir &ensp;<i class="fas fa-door-open label-icon"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

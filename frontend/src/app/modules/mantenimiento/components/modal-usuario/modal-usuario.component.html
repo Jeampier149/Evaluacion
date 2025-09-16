@@ -1,0 +1,71 @@
+<div #modalUsuario *teleportTo="'body'" class="modal fade" tabIndex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    @if (tipo === 1) {
+                        Nuevo Usuario
+                    } @else {
+                        Editar Usuario
+                    }</h5>
+                <button (click)="closeModal()" aria-label="Close" class="btn-close" type="button">
+                </button>
+            </div>
+            <div class="modal-body">
+                <app-loading [mostrar]="loading">
+                    <div class="row">
+                     <div class="row">
+                        <div [formGroup]="usuarioForm" class="col-xl-3 col-md-6">
+                            <label class="form-label">Código</label>
+                            <input bsInvalid class="form-control form-control-sm text-uppercase"
+                                   formControlName="codigo">
+                        </div>
+                        <div [formGroup]="usuarioForm" class="col-xl-9 col-md-12">
+                            <label class="form-label">Nombres y Apellidos</label>
+                            <input bsInvalid class="form-control form-control-sm text-uppercase"
+                                   formControlName="nombres">
+                        </div>
+                     </div>
+    
+                        <div [formGroup]="usuarioForm" class="col-xl-3 col-md-4 col-sm-4">
+                            <label class="form-label">Perfil</label>
+                            <div class="input-group input-group-sm">
+                                <input (keydown.enter)="buscarPerfil()" bsInvalid
+                                       class="form-control form-control-sm text-uppercase"
+                                       formControlName="perfil">
+                                <button (click)="abrirModalPerfil()" bsTooltip="Lista Perfiles"
+                                        class="btn btn-sm btn-primary waves-light waves-effect">
+                                    <i class="fa fa-list"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-xl-9 col-md-8 col-sm-8 col-sm-8">
+                            <label class="form-label">Descripción</label>
+                            <input [(ngModel)]="descripcionPerfil" class="form-control form-control-sm text-uppercase"
+                                   disabled>
+                        </div>
+                        @if (tipo === 2) {
+                            <div class="col-md-auto ms-auto align-self-end pt-2">
+                                <button class="btn btn-warning btn-sm w-100 waves-effect waves-light btn-label"
+                                        (click)="resetContrasenia()">
+                                    <i class="fa fa-eraser label-icon"></i> Borrar Contraseña
+                                </button>
+                            </div>
+                        }
+                   
+                    </div>
+               
+                </app-loading>
+            </div>
+            <div class="modal-footer">
+                <button (click)="guardarUsuario()" class="btn btn-success waves-light waves-effect btn-label"
+                        type="button">
+                    Guardar &ensp;<i class="fas fa-save label-icon"></i></button>
+                <button (click)="closeModal()" class="btn btn-danger waves-light waves-effect btn-label" type="button">
+                    Salir &ensp;<i class="fas fa-door-open label-icon"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+<app-modal-perfil></app-modal-perfil>
+

@@ -1,0 +1,181 @@
+<app-breadcrumb [rutas]="rutas" titulo="Usuarios de sistema"></app-breadcrumb>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row d-flex justify-content-between mb-4">                  
+                        <div class="col-xl-2">
+                            <button (click)="reporteUsuarios()"
+                            aria-expanded="false"
+                            class="btn w-100 btn-sm btn-success waves-light waves-effect btn-label w-50"
+                            type="button">
+                        <i class="fa fa-file label-icon"></i>
+                        Exportar
+                       </button>
+                        </div>
+                        <div class="col-xl-2">
+                            <button (click)="abrirModalUsuario(1)"
+                                aria-expanded="false"
+                                class="btn w-100 btn-sm btn-primary waves-light waves-effect btn-label w-50"
+                                type="button">
+                            <i class="fa fa-file label-icon"></i>
+                            Nuevo Usuario
+                        </button>
+                        </div>                                        
+                </div>
+                <div class="row pt-2">
+                    <div class="col-xl-12">
+                        <app-loading [mostrar]="loading">
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th style="min-width: 75px; width: 75px">Acciones</th>
+                                                <th class="text-center" style="width: 120px; max-width: 120px; min-width: 120px">
+                                                    Código Usu.
+                                                </th>
+                                                <th class="text-center" style="width: 360px; min-width: 310px;">
+                                                    Departamento
+                                                </th>
+                                                <th class="text-center" style="width: 360px; min-width: 310px;">
+                                                    Servicio
+                                                </th>
+                                                <th class="text-center" style="width: 150px; min-width: 150px">
+                                                    Cod. Perfil
+                                                </th>
+                                                <th class="text-center" style="min-width: 200px">
+                                                    Perfil
+                                                </th>
+                                                <th class="text-center" style="min-width: 200px">
+                                                    Correo
+                                                </th>
+                                                <th class="text-center" style="min-width: 200px">
+                                                    Telefono
+                                                </th>
+                                                <th class="text-center" style="width: 100px; min-width: 100px">Estado
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    <button
+                                                        (click)="limpiarCampos()"
+                                                        class="btn w-100 btn-sm btn-danger waves-effect waves-light">
+                                                        Limpiar
+                                                    </button>
+                                                </th>
+                                                <th>
+                                                    <input #inpFocus
+                                                           (keydown.enter)="filtrarUsuarios()"
+                                                           [(ngModel)]="filtros.codigo"
+                                                           class="form-control form-control-sm text-uppercase"
+                                                           inputmode="text">
+                                                </th>
+                                                <th>
+                                                    <input
+                                                           (keydown.enter)="filtrarUsuarios()"
+                                                           [(ngModel)]="filtros.departamento"
+                                                           class="form-control form-control-sm text-uppercase"
+                                                           inputmode="text">
+                                                </th>
+                                                <th>
+                                                    <input
+                                                           (keydown.enter)="filtrarUsuarios()"
+                                                           [(ngModel)]="filtros.nombres"
+                                                           class="form-control form-control-sm text-uppercase"
+                                                           inputmode="text">
+                                                </th>
+                                                <th>
+                                                    <input
+                                                        (keydown.enter)="filtrarUsuarios()"
+                                                        [(ngModel)]="filtros.perfil"
+                                                        class="form-control form-control-sm text-uppercase"
+                                                        inputmode="text">
+                                                </th>
+                                                <th>
+                                                    <input
+                                                        (keydown.enter)="filtrarUsuarios()"
+                                                        [(ngModel)]="filtros.descripcionPerfil"
+                                                        class="form-control form-control-sm text-uppercase"
+                                                        inputmode="text">
+                                                </th>
+                                                <th></th>
+                                                <th></th>
+                                                <th><select
+                                                    (change)="filtrarUsuarios()"
+                                                    [(ngModel)]="filtros.estado"
+                                                    class="form-control form-control-sm text-uppercase text-center"
+                                                    type="text">
+                                                    <option value="1">Activo</option>
+                                                    <option value="0">Anulado</option>
+                                                    <option value="2">Todos</option>
+                                                </select>
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (usuario of usuarios; track usuarios; ) {
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <div class="d-flex gap-1 flex-wrap">
+                                                                @if (usuario.estado === 'A') {
+                                                                    <button bsTooltip="Editar"
+                                                                            (click)="abrirModalUsuario(2,usuario.codigo)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-primary">
+                                                                        <i class="fa fa-pencil"></i></button>
+                                                                    <button bsTooltip="Anular"
+                                                                            (click)="anularUsuario(usuario.codigo)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-danger">
+                                                                        <i class="fa fa-trash"></i></button>
+                                                                } @else {
+                                                                    <button bsTooltip="Activar"
+                                                                            (click)="activarUsuario(usuario.codigo)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-success">
+                                                                        <i class="fa fa-check"></i></button>
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">{{ usuario.codigo }}</td>
+                                                        <td>{{ usuario.departamento}}</td>
+                                                        <td>{{ usuario.nombres }}</td>                                                        
+                                                        <td>{{ usuario.perfil }}</td>
+                                                        <td>{{ usuario.desPerfil }}</td>
+                                                        <td>{{ usuario.correo }}</td>
+                                                        <td>{{ usuario.telefono}}</td>
+                                                        <td class="text-center">
+                                                            @if (usuario.estado === 'A') {
+                                                                <span class="badge rounded-pill bg-success">
+                                                                    {{ usuario.desEstado }}
+                                                                </span>
+                                                            } @else {
+                                                                <span class="badge rounded-pill bg-danger">
+                                                                    {{ usuario.desEstado }}
+                                                                </span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                } @empty {
+                                                    <tr>
+                                                        <td class="text-center" colspan="12">No hay
+                                                            resultados
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <app-paginado (cambioPagina)="cambioPagina($event)" (cambioVer)="filtrarUsuarios()"
+                                          [(longitud)]="longitud"
+                                          [datos]="usuarios"
+                                          [pagina]="pagina" [ver]="true"></app-paginado>
+                        </app-loading>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<app-modal-usuario></app-modal-usuario>

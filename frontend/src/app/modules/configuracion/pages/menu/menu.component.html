@@ -1,0 +1,139 @@
+<app-breadcrumb [rutas]="rutas" [titulo]="'Menus'"></app-breadcrumb>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-auto col-md-auto col-sm-auto">
+                        <button type="button" (click)="abrirNuevoMenu()"
+                                class="btn w-100 btn-sm btn-primary waves-light waves-effect btn-label">
+                            <i class="fa fa-file label-icon"></i> Nuevo Menu
+                        </button>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-xl-12">
+                        <app-loading [mostrar]="loading">
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th style="width: 140px; min-width: 140px">Acciones</th>
+                                                <th style="min-width: 260px">Nombre</th>
+                                                <th style="min-width: 260px">Padre</th>
+                                                <th class="text-center" style="width: 60px; min-width: 60px">Orden</th>
+                                                <th class="text-center" style="width: 50px; min-width: 50px">Icono</th>
+                                                <th style="width: 250px; min-width: 250px">Ruta</th>
+                                                <th class="text-center" style="width: 80px; min-width: 80px">Estado</th>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <button type="button" (click)="limpiarFiltros()"
+                                                            class="btn btn-sm w-100 btn-danger waves-effect waves-light">
+                                                        Limpiar
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <input #inpFocus type="text" [(ngModel)]="filtros.nombre"
+                                                           (keydown.enter)="filtrarMenu()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                <td>
+                                                    <input type="text" [(ngModel)]="filtros.padre"
+                                                           (keydown.enter)="filtrarMenu()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                <td>
+                                                    <input type="number" [(ngModel)]="filtros.orden"
+                                                           (keydown.enter)="filtrarMenu()"
+                                                           min="0" step="1"
+                                                           class="form-control form-control-sm">
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>
+                                                    <select [(ngModel)]="filtros.estado"
+                                                            (change)="filtrarMenu()"
+                                                            class="form-control form-control-sm text-center">
+                                                        <option value="A">Activo</option>
+                                                        <option value="*">Anulado</option>
+                                                        <option value="">Todos</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (menu of menus; track menu.id) {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex gap-1 flex-wrap">
+                                                                @if (menu.estado !== '*') {
+                                                                    <button bsTooltip="Editar"
+                                                                            (click)="abrirEditarMenu(menu.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-primary">
+                                                                        <i class="fa fa-pencil"></i></button>
+                                                                    <button bsTooltip="Acciones"
+                                                                            (click)="abrirModalAccion(menu.id, menu.nombre)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-dark">
+                                                                        <i class="fa fa-list"></i></button>
+                                                                    <button bsTooltip="Accesos"
+                                                                            (click)="abrirModalAcceso(menu.id, menu.nombre)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-soft-dark">
+                                                                        <i class="fa fa-lock"></i></button>
+                                                                    <button bsTooltip="Anular"
+                                                                            (click)="abrirAnularMenu(menu.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-danger">
+                                                                        <i class="fa fa-trash"></i></button>
+                                                                } @else {
+                                                                    <button bsTooltip="Activar"
+                                                                            (click)="abrirActivarMenu(menu.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-success">
+                                                                        <i class="fa fa-check"></i></button>
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ menu.nombre }}</td>
+                                                        <td>{{ menu.padre }}</td>
+                                                        <td class="text-center">{{ menu.orden }}</td>
+                                                        @if (menu.icono !== '') {
+                                                            <td class="text-center"><i [class]="menu.icono"></i></td>
+                                                        } @else {
+                                                            <td>{{ menu.icono }}</td>
+                                                        }
+                                                        <td>{{ menu.ruta }}</td>
+                                                        <td class="text-center">
+                                                            @if (menu.estado === 'A') {
+                                                                <span class="badge rounded-pill text-bg-success">
+                                                                    Activo</span>
+                                                            } @else {
+                                                                <span class="badge rounded-pill text-bg-danger">
+                                                                    Anulado</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                } @empty {
+                                                    <tr class="text-center">
+                                                        <td colspan="7">No hay items que mostrar</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <app-paginado [datos]="menus" [(longitud)]="longitud" [pagina]="pagina"
+                                          (cambioVer)="listarMenu()"
+                                          [ver]="true" (cambioPagina)="cambioPagina($event)">
+                            </app-paginado>
+                        </app-loading>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<app-modal-menu></app-modal-menu>
+<app-modal-accion></app-modal-accion>
+<app-modal-acceso></app-modal-acceso>

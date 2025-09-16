@@ -1,0 +1,12 @@
+.container-inicio {
+    width: 100%;
+    height: calc(100vh - 160px);
+    border-radius: 11px;
+    overflow: hidden;
+    background-position: center center !important;
+    position: relative;
+}
+
+.container-inicio div {
+    background-color: rgb(231 225 255 / 29%);
+}
