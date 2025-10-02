@@ -6,6 +6,8 @@ import { MiEvaluacionComponent } from './pages/mi-evaluacion/mi-evaluacion.compo
 import { EvaluarComponent } from './pages/evaluar/evaluar.component';
 import { PersonalEvaluarComponent } from './pages/personal-evaluar/personal-evaluar.component';
 import { FormularioEvaluarComponent } from './pages/formulario-evaluar/formulario-evaluar.component';
+import { RevisorComponent } from './pages/revisor/revisor.component';
+import { FormularioEvaluarRevisorComponent } from './pages/formulario-evaluar-revisor/formulario-evaluar-revisor.component';
 
 
 const routes: Routes = [
@@ -14,11 +16,15 @@ const routes: Routes = [
     {path: 'mi_evaluacion', component: MiEvaluacionComponent, title: 'Mi evaluacion | SIEVAL'},
     {path: 'evaluar', component: EvaluarComponent, title: 'Evaluar| SIEVAL'},
     {path: 'personal_evaluar', component: PersonalEvaluarComponent, title: '´PersonalEvaluar| SIEVAL'},
-    {path: 'formulario_evaluar', component: FormularioEvaluarComponent, title: '´FormularioEvaluar| SIEVAL'}
+    {path: 'formulario_evaluar', component: FormularioEvaluarComponent, title: '´FormularioEvaluar| SIEVAL'},
+    {path: 'revisor', component: RevisorComponent, title: 'Revisor| SIEVAL'},
+    {path: 'formulario_evaluar_revisor', component: FormularioEvaluarRevisorComponent, title: '´FormularioEvaluarRevisor| SIEVAL'},
 
 ];
 @NgModule({
     imports: [RouterModule.forChild(routes)]
 })
 export class EvaluacionRoutingModule {
+
 }
+    

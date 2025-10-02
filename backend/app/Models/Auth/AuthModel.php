@@ -26,6 +26,14 @@ class AuthModel extends Model
             return [];
         }
     }
+        public function obtenerInformacion($empleado): array
+    {
+        try {
+            return $this->conexion->select("EXEC dbo.sp_obtener_informacion ?", [$empleado]);
+        } catch (\Error $e) {
+            return [];
+        }
+    }
     public function obtenerAccesos($perfil): array
     {
         $smtp = $this->conexion->getPdo()->prepare(/** @lang SQL */ 'EXEC dbo.gral_sp_lst_pg_accion_perfil ?');

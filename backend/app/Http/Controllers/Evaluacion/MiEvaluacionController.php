@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Evaluacion;
 
 use App\Http\Controllers\Respuesta\JSONResponseController;
 use App\Models\Evaluacion\EvaluarModel;
+use App\Models\Evaluacion\MiEvaluacionModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
 use Mpdf\Mpdf;
 use stdClass;
 
-class EvaluarController extends JSONResponseController
+class MiEvaluacionController extends JSONResponseController
 {
     public function __construct()
     {
@@ -48,45 +49,14 @@ class EvaluarController extends JSONResponseController
         $resultado = $perfilModel->listarEvaluar($params, $codigo, $perfil);
         return $this->sendResponse(200, true, '', $resultado);
     }
-     public function listarEvaluarRevisor(Request $request): JsonResponse
+
+    public function listarPeriodosMiEvaluacion(Request $request): JsonResponse
     {
-        $validacion = Validator::make($request->only(['periodo', 'pagina', 'longitud']), [
 
-            'periodo' => 'nullable|string',
-
-        ]);
-
-        if ($validacion->fails()) {
-            return $this->sendResponse(200, false, 'Error de validación', $validacion->errors());
-        }
-
-        $perfilModel = new EvaluarModel();
-        $params = new stdClass();
-        $params->periodo = $request->get('periodo') ?? '';
-        $params->estado = $request->get('estado') ?? '';
-        $params->empleado = $request->get('empleado') ?? '';
-        $params->categoria = $request->get('categoria') ?? '';
-        $params->unidad = $request->get('unidad') ?? '';
-        $params->servicio = $request->get('servicio') ?? '';
-        $params->periodo = $request->get('periodo') ?? '';
-        $params->cargo = $request->get('cargo') ?? '';
-        $params->longitud = $request->get('longitud') ?? 15;
-        $params->pagina = $request->get('pagina') ?? 1;
+        $perfilModel = new MiEvaluacionModel();
         $user = $request->user();
-        $codigo = $user->cc_empleado;
-        $perfil = $user->id_perfil;
-        $resultado = $perfilModel->listarEvaluarRevisor($params, $codigo, $perfil);
-        return $this->sendResponse(200, true, '', $resultado);
-    }
-
-    public function listarPeriodos(Request $request): JsonResponse
-    {
-
-
-
-        $perfilModel = new EvaluarModel();
-        $params = new stdClass();
-        $resultado = $perfilModel->listarPeriodo($params);
+        $empleado = $user->cc_empleado;
+        $resultado = $perfilModel->listarPeriodosMiEvaluacion($empleado);
         return $this->sendResponse(200, true, '', $resultado);
     }
 
@@ -282,7 +252,21 @@ class EvaluarController extends JSONResponseController
         return $this->sendResponse(200, true, '', $resultado);
     }
 
-    public function guardarEvaluar(Request $request)
+    public function editarEvaluar(Request $request): JsonResponse
+    {
+        $perfilModel = new EvaluarModel();
+        $params = new stdClass();
+        $params->id = $request->post('id') ?? '';
+        $params->descripcion = $request->post('descripcion') ?? '';
+
+        $user = $request->user();
+        $usuario = $user->cc_empleado;
+        $perfil = $user->id_perfil;
+        $equipo = Str::upper(explode(':', gethostbyaddr($_SERVER['REMOTE_ADDR']))[0] ?? '');
+        [$estado, $mensaje, $resultado] = $perfilModel->editarEvaluar($params, $usuario, $perfil, $equipo);
+        return $this->sendResponse(200, $estado, $mensaje, $resultado);
+    }
+    public function guardarEvaluarMiEvaluacion(Request $request)
     {
         $perfilModel = new EvaluarModel();
         $data = $request->post('data');
@@ -293,12 +277,13 @@ class EvaluarController extends JSONResponseController
         if (is_string($data)) {
             $data = json_decode($data, true); // Agregar true para convertir a array
         }
+
         // Acceder como array en lugar de objeto
-        $periodo = $data['info_evaluacion'][0]['cc_periodo'];
-        $empleado = $data['info_evaluacion'][0]['cc_empleado'];
-        $ct_recomendacion = $data['info_evaluacion'][0]['ct_recomendacion'];
-        $cfl_capacitacion = $data['info_evaluacion'][0]['cfl_capacitacion'];
-        $ct_capacitacion = $data['info_evaluacion'][0]['ct_capacitacion'];
+        $periodo = $data['info_evaluacion']['cc_periodo'];
+        $empleado = $data['info_evaluacion']['cc_empleado'];
+        $ct_recomendacion = $data['info_evaluacion']['ct_recomendacion'];
+        $cfl_capacitacion = $data['info_evaluacion']['cfl_capacitacion'];
+        $ct_capacitacion = $data['info_evaluacion']['ct_capacitacion'];
         $cfl_evaluador = 0;
         $puntaje_rev = 0;
 
@@ -325,51 +310,31 @@ class EvaluarController extends JSONResponseController
 
         return $this->sendResponse(200, $estado, $mensaje, $resultado);
     }
-  
-   public function guardarEvaluarRevisor(Request $request)
+
+    public function anularEvaluar(Request $request): JsonResponse
     {
         $perfilModel = new EvaluarModel();
-        $data = $request->post('data');
+        $idPerfil = $request->post('idEvaluar') ?? '';
+        $motivo = $request->post('motivo') ?? '';
+
         $user = $request->user();
-        $usuario = $user->cc_empleado;
+        $usuario = $user->xg_Cod_Usuario;
+        $perfil = $user->xg_Cod_Perfil;
         $equipo = Str::upper(explode(':', gethostbyaddr($_SERVER['REMOTE_ADDR']))[0] ?? '');
-         $equipo = substr($equipo, 0, 10); // TRUNCAR A 10 CARACTERES
-        if (is_string($data)) {
-            $data = json_decode($data, true); // Agregar true para convertir a array
-        }
-        // Acceder como array en lugar de objeto
-        $periodo = $data['info_evaluacion'][0]['cc_periodo'];
-        $empleado = $data['info_evaluacion'][0]['cc_empleado'];
-        $ct_recomendacion = $data['info_evaluacion'][0]['ct_recomendacion'];
-        $cfl_capacitacion = $data['info_evaluacion'][0]['cfl_capacitacion'];
-        $ct_capacitacion = $data['info_evaluacion'][0]['ct_capacitacion'];
-        $cfl_evaluador = 1;
-        $puntaje_rev = 0;
-
-       foreach ($data['factores'] as $factor) {
-            $id_factor_criterio = $factor['id_factor_criterio_revisor'];
-            $puntaje_asignado = $factor['puntaje_asig_revisor'];
-            $id_factor = $factor['id_factor'];
-           
-            [$estado, $mensaje, $resultado] = $perfilModel->guardarEvaluar(
-                $periodo,
-                $empleado,
-                $id_factor,
-                $id_factor_criterio,
-                $cfl_evaluador,
-                $puntaje_asignado,
-                $puntaje_rev,
-                $ct_recomendacion,
-                $cfl_capacitacion,
-                $ct_capacitacion,
-                $usuario,
-                $equipo
-            );
-        }
-
+        [$estado, $mensaje, $resultado] = $perfilModel->anularEvaluar($idPerfil, $motivo, $usuario, $perfil, $equipo);
         return $this->sendResponse(200, $estado, $mensaje, $resultado);
-
-       
     }
 
+    public function activarEvaluar(Request $request): JsonResponse
+    {
+        $perfilModel = new EvaluarModel();
+        $idPerfil = $request->post('idEvaluar') ?? '';
+
+        $user = $request->user();
+        $usuario = $user->xg_Cod_Usuario;
+        $perfil = $user->xg_Cod_Perfil;
+        $equipo = Str::upper(explode(':', gethostbyaddr($_SERVER['REMOTE_ADDR']))[0] ?? '');
+        [$estado, $mensaje, $resultado] = $perfilModel->activarEvaluar($idPerfil, $usuario, $perfil, $equipo);
+        return $this->sendResponse(200, $estado, $mensaje, $resultado);
+    }
 }

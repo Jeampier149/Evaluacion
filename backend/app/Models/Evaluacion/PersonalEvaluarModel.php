@@ -66,42 +66,123 @@ class PersonalEvaluarModel extends Model
         return $resultados;
     }
 
-    public function guardarEvaluar(
-        $periodo,
-        $empleado,
-        $id_factor,
-        $id_factor_criterio,
-        $cfl_evaluador,
-        $puntaje_asignado,
-        $puntaje_rev,
-        $ct_recomendacion,
-        $cfl_capacitacion,
-        $ct_capacitacion,
-        $usuario,
-        $equipo
-    ) {
+    public function agregarEmpEval($tipo,$periodo,$empleado, $usuario, $perfil, $equipo)
+    {   
+ 
         $smtp = $this->conexion->getPdo()->prepare(
         /** @lang SQL */
-        'EXEC dbo.sp_insertar_crit_per_emp ?,?,?,?,?,?,?,?,?,?,?,?');
-
+        'EXEC dbo.sp_insertar_eval_empleado ?,?,?,?,?,?');
         $smtp->bindParam(1, $periodo);
-        $smtp->bindParam(2, $empleado);
-        $smtp->bindParam(3, $id_factor);
-        $smtp->bindParam(4, $id_factor_criterio);
-        $smtp->bindParam(5, $cfl_evaluador);
-        $smtp->bindParam(6, $puntaje_asignado);
-        $smtp->bindParam(7, $puntaje_rev);
-        $smtp->bindParam(8, $ct_recomendacion);
-        $smtp->bindParam(9, $cfl_capacitacion);
-        $smtp->bindParam(10, $ct_capacitacion);
-        $smtp->bindParam(11, $usuario);
-        $smtp->bindParam(12, $equipo);
-        // $smtp->bindParam(6, $estado, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 1);
-        // $smtp->bindParam(7, $mensaje, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 300);
+        $smtp->bindParam(2, $tipo);
+        $smtp->bindParam(3, $empleado);
+        $smtp->bindParam(4, $usuario);
+        $smtp->bindParam(5, $equipo);
+        // El parámetro OUTPUT necesita tratamiento especial
+        $smtp->bindParam(6, $resultado, PDO::PARAM_STR, 100);
+    
+    $smtp->execute();
+    $smtp->closeCursor();
+    
+    return ['200', '', $resultado ?? ''];
+    }
+
+    public function obtenerSelects()
+    {
+        try {
+        $smtp = $this->conexion->getPdo()->prepare('EXEC dbo.sp_obtener_todas_tablas_json');
         $smtp->execute();
-        $resultados = $smtp->columnCount() > 0 ? $smtp->fetchAll(PDO::FETCH_COLUMN) : '';
+        
+        // Como el SP retorna una sola fila con columnas JSON
+        $resultado = $smtp->fetch(PDO::FETCH_ASSOC);
         $smtp->closeCursor();
-        return ['1', 'ok', $resultados];
+        
+        // Si no hay resultados
+        if (!$resultado) {
+            return [
+                'unidades' => [],
+                'servicios' => [],
+                'categorias' => [],
+                'cargos' => [],
+                'niveles' => []
+            ];
+        }
+        
+        // Convertir cada columna JSON a array
+        $datosProcesados = [];
+        $columnas = [
+            'unidades',
+            'servicios', 
+            'categorias',
+            'cargos',
+            'niveles',
+            'condicion_laboral',
+            'empleado',
+            'estados'
+        ];
+        
+        foreach ($columnas as $columna) {
+            if (isset($resultado[$columna]) && $resultado[$columna] !== null) {
+                $datosProcesados[$columna] = json_decode($resultado[$columna], true) ?: [];
+            } else {
+                $datosProcesados[$columna] = [];
+            }
+        }
+        
+        return $datosProcesados;
+        
+    } catch (\Exception $e) {
+        // Log del error
+        error_log("Error en obtenerSelects: " . $e->getMessage());
+        
+        return [
+            'unidad_organica' => [],
+            'servicios' => [],
+            'categorias' => [],
+            'cargos' => [],
+            'niveles' => []
+        ];
+    }
+    }
+ 
+   public function obtenerDataEval($id,$periodo)
+    {
+        $smtp = $this->conexion->getPdo()->prepare(
+        /** @lang SQL */
+        'EXEC dbo.eval_sp_obtener_datos_evaluado ?,?');
+        $smtp->bindParam(1, $id);
+        $smtp->bindParam(2, $periodo);
+        $smtp->execute();
+        $resultados = $smtp->columnCount() > 0 ? $smtp->fetchAll(PDO::FETCH_ASSOC) : [];
+        $smtp->closeCursor();
+        return $resultados;
+    }
+
+
+     public function editarPersonalEval(stdClass $params,$periodo,$empleado,$usuario,$equipo): array
+    {
+        $smtp = $this->conexion->getPdo()->prepare(
+        /** @lang SQL */
+        'EXEC dbo.eval_sp_upd_personal_evaluar ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?');
+        $smtp->bindParam(1, $params->idUnidad);
+        $smtp->bindParam(2, $params->idServicio);
+        $smtp->bindParam(3, $params->idCargo);
+        $smtp->bindParam(4, $params->idCategoria);
+        $smtp->bindParam(5, $params->idCondicion);
+        $smtp->bindParam(6, $params->idNivel);
+        $smtp->bindParam(7, $params->evaluador);
+        $smtp->bindParam(8, $params->factor_asistencia);
+        $smtp->bindParam(9, $params->puntaje_asistencia);
+        $smtp->bindParam(10, $params->revisor);
+        $smtp->bindParam(11, $params->idEstado);
+        $smtp->bindParam(12, $periodo);
+        $smtp->bindParam(13, $empleado);
+        $smtp->bindParam(14, $usuario);
+        $smtp->bindParam(15, $equipo);
+
+        $smtp->execute();
+        $resultados = $smtp->columnCount() > 0 ? $smtp->fetchAll(PDO::FETCH_ASSOC) : [];
+        $smtp->closeCursor();
+        return $resultados;
     }
 
 

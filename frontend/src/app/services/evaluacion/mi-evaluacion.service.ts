@@ -8,10 +8,11 @@ import {HttpResponseApi} from "@interfaces/http.interface";
 @Injectable({
     providedIn: 'root'
 })
-export class EvaluarService {
+export class MiEvaluacionService {
     constructor(private http: HttpClient) {
 
     }
+
 
     listarEvalEmpleado(params:any): Observable<HttpResponseApi> {
         return this.http.get<HttpResponseApi>('/api/evaluacion/evaluar/lista-evaluar', {
@@ -19,18 +20,19 @@ export class EvaluarService {
             responseType: "json"
         });
     }
-      listarEvalEmpleadoRevisor(params:any): Observable<HttpResponseApi> {
-        return this.http.get<HttpResponseApi>('/api/evaluacion/evaluar/lista-evaluar-revisor', {
-            params: {...params},
-            responseType: "json"
-        });
-    }
-       listarPeriodos(): Observable<HttpResponseApi> {
-        return this.http.get<HttpResponseApi>('/api/evaluacion/evaluar/lista-periodos', {
+       listarPeriodosMievaluacion(): Observable<HttpResponseApi> {
+        return this.http.get<HttpResponseApi>('/api/evaluacion/evaluar/lista-periodos-mi-evaluacion', {
             params: {},
             responseType: "json"
         });
     }
+
+    listarEvalForm(idCategoria: string): Observable<HttpResponseApi> {
+            return this.http.get<HttpResponseApi>('/api/evaluacion/evaluar/lista-eval-form', {
+                params: {idCategoria},
+                responseType: "json"
+            });
+        }
 
     listarEvalFormF(idEmpleado:any,periodo:any,categoria:any): Observable<HttpResponseApi> {
             return this.http.get<HttpResponseApi>('/api/evaluacion/evaluar/lista-eval-form-f', {
@@ -38,8 +40,6 @@ export class EvaluarService {
                 responseType: "json"
             });
         }
-
-        
 
       generarPdf(idEmpleado:any,periodo:any,categoria:any) {
             return this.http.get('/api/evaluacion/evaluar/generarPdf-Evaluacion', {
@@ -49,13 +49,6 @@ export class EvaluarService {
         }
 
 
-   listarHistorial(params:any,idEmpleado:any): Observable<HttpResponseApi> {
-        return this.http.get<HttpResponseApi>('/api/evaluacion/evaluar/listar-historial', {
-            params: {...params,idEmpleado},
-            responseType: "json"
-        });
-    }
-
   
      guardarEvaluar(data: any): Observable<HttpResponseApi> {
             return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/guardar-evaluar', {data},
@@ -63,12 +56,7 @@ export class EvaluarService {
             );
         }
 
-     guardarEvaluarRevisor(data: any): Observable<HttpResponseApi> {
-            return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/guardar-evaluar-revisor', {data},
-                {responseType: "json"}
-            );
-        }
-    
+          
 
 
 

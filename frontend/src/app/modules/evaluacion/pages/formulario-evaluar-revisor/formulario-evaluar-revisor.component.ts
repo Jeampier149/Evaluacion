@@ -3,41 +3,57 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EvaluarService } from '@services/evaluacion/evaluar.service';
 import { finalize } from 'rxjs/operators';
 import { errorAlerta, successAlerta } from '@shared/utils';
-import { MiEvaluacionService } from '@services/evaluacion/mi-evaluacion.service';
+
 
 @Component({
-  selector: 'app-mi-evaluacion',
-  templateUrl: './mi-evaluacion.component.html',
-  styleUrl: './mi-evaluacion.component.scss'
+  selector: 'app-formulario-evaluar-revisor',
+  templateUrl: './formulario-evaluar-revisor.component.html',
+  styleUrl: './formulario-evaluar-revisor.component.scss'
 })
-export class MiEvaluacionComponent implements OnInit{
- idEmpleado= localStorage.getItem('cc_empleado');
+export class FormularioEvaluarRevisorComponent {
+   idEmpleado: string = '';
     periodo: string = '';
-    categoria= localStorage.getItem('categoria');
+    categoria: string = '';
     loading: boolean = true;
     factores: any[] = [];
     data: any = null;
     longitud: number = 15;
     pagina: number = 1;
     empleados: any[] = [];
-    periodos: any[] = [];
-    valor:any=''
+    historial: any[] = [];
 
+    otros = {
+        recomendacion: '',
+        capacitacion: '',
+        capa: '',
+    };
+
+    filtros = {
+        periodo: '',
+        categoria: '',
+        servicio: '',
+        cargo: '',
+    };
 
     constructor(
+        private router: Router,
+        private route: ActivatedRoute,
         public EvaluarService$: EvaluarService,
-        public MiEvaluacion$:MiEvaluacionService
+        private cdRef: ChangeDetectorRef
     ) {
-   this.listarPeriodosMievaluacion()
+        const navigation = this.router.getCurrentNavigation();
+        this.idEmpleado = navigation?.extras?.state?.['id'] || '';
+        this.periodo = navigation?.extras?.state?.['periodo'] || '';
+        this.categoria = navigation?.extras?.state?.['categoria'] || '';
     }
 
     ngOnInit(): void {
         this.listarEvaluacion();
-    
+        this.listarHistorial();
     }
 
     listarEvaluacion() {
-        if (!this.idEmpleado ) {
+        if (!this.idEmpleado || !this.periodo || !this.categoria) {
             errorAlerta(
                 'Error!',
                 'Faltan parámetros necesarios para cargar la evaluación'
@@ -228,6 +244,38 @@ export class MiEvaluacionComponent implements OnInit{
         return parseFloat(total.toFixed(2));
     }
 
+    filtrarEmpleado() {
+        this.pagina = 1;
+        this.listarHistorial();
+    }
+
+    listarHistorial() {
+        if (!this.idEmpleado) {
+            return;
+        }
+
+        let params: any = {
+            ...this.filtros,
+            longitud: this.longitud,
+            pagina: this.pagina,
+        };
+
+        this.loading = true;
+        this.EvaluarService$.listarHistorial(params, this.idEmpleado)
+            .pipe(finalize(() => (this.loading = false)))
+            .subscribe(({ estado, mensaje, datos }) => {
+                if (estado) {
+                    this.historial = datos || [];
+                } else {
+                    errorAlerta('Error!', mensaje).then();
+                }
+            });
+    }
+
+    cambioPagina(pagina: number) {
+        this.pagina = pagina;
+        this.listarHistorial();
+    }
 
 
     guardarEvaluacion() {
@@ -246,59 +294,5 @@ export class MiEvaluacionComponent implements OnInit{
                     errorAlerta('Error!', mensaje).then();
                 }
             });
-    }
-   cambiarFiltroPeriodo(){
-   this.listarEvaluacion()
-    }
-    listarPeriodosMievaluacion(){
-        let empleado=localStorage.getItem('cc_empleado');
-        let categoria=localStorage.getItem('categoria');
-        this.loading = true;
-        this.MiEvaluacion$.listarPeriodosMievaluacion()
-            .pipe(finalize(() => this.loading = false))
-            .subscribe(({estado, mensaje, datos}) => {
-                if (estado) {
-                    this.periodos = datos!;
-                    this.periodo=this.periodos[0].cc_periodo
-                    this.listarEvaluacion()
-                } else {
-                    errorAlerta('Error!', mensaje).then();
-                }
-            })
-    }
-    generarCalificacion(){
-        let total=this.data.info_evaluacion[0].ni_puntaje_cap +   this.data.info_evaluacion[0].ni_puntaje_pun+     this.data.info_evaluacion[0].ni_puntaje_asi +this.data.info_evaluacion[0].ni_puntaje_dcl
-        console.log(total)
-       
-        if(this.categoria=='05'){
-            if(total>1 && total<=70) {
-                this.valor='DEFICIENTE'
-
-            }else if(total>=71 && total<=80){
-                 this.valor='REGULAR'
-            }else if(total>=81 &&  total<=90){
-                  this.valor= 'BUENO'
-            }else if(total>=91 && total<=100){
-                  this.valor= 'EXCELENTE'
-            }else{
-                'NO DEFINIDO'
-            }
-
-        }else{
-            if(total>0 &&  total<=29) {
-                  this.valor= 'INFERIOR'
-            }else if(total>=30 && total<=59){
-                 this.valor='INFERIOR AL PROMEDIO'
-            }else if(total>=60 && total<=70){
-                  this.valor= 'PROMEDIO'
-            }else if(total>=71 && total<=90){
-                  this.valor= 'SUPERIOR AL PROMEDIO'
-            }else if(total>=91 && total<=100){
-                  this.valor= 'SUPERIOR'
-            } else{
-                'NO DEFINIDO'
-            } 
-        }
-        return  this.valor
     }
 }

@@ -1,0 +1,168 @@
+
+<app-breadcrumb [rutas]="rutas" titulo="Revisor"></app-breadcrumb>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row d-flex justify-content-between">
+                    <div class="col-xl-auto col-md-auto col-sm-auto">
+                        <div class="col-auto">
+                            <input autocomplete="off" class="btn-check" id="btnModo" type="checkbox" [(ngModel)]="esMultiple" (click)="seleccionarVarios()">
+                             <label class="btn btn-sm btn-outline-primary text-uppercase" for="btnModo">Seleccionar varios</label>
+                        </div>
+                 @if (esMultiple && (seleccionados.length > 0)) {
+                        <div class="col-auto">
+                            <button class="btn btn-sm btn-primary btn-label waves-effect waves-light text-uppercase" (click)="firmarLote()">
+                             <i class="fa fa-file-signature label-icon"></i>
+                                 Firmar por lote
+                            </button>
+                        </div>
+    }
+                    </div>
+                    <div class="col">
+                        <div class="col-4">
+                            <div class="input-group input-group-sm">
+                                     <span class="input-group-text text-uppercase"><b>Periodo</b></span>
+                                         <select class="form-select form-select-sm text-uppercase" [(ngModel)]="filtros.periodo" (change)="cambiarFiltroPeriodo()">
+                                             @for (periodo of periodos; track periodo.id) {
+                                                        <option  [value]="periodo.id">{{ periodo.descripcion }}</option>
+                                                    }
+                                        </select>
+                            </div>
+                        </div>
+                            
+                    </div>
+                </div>
+                <div class="row pt-4">
+                    <div class="col-xl-12">
+                        <app-loading [mostrar]="loading">
+                            <div class="row">
+
+
+                               <div class="col-xl-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th style="width: 110px; min-width: 110px">Acciones</th>
+                                                <th class="text-center" style="min-width: 350px; width: 150px">Apellidos y Nombres</th>
+                                                <th style="min-width: 100px; width: 100px">Categoria</th>
+                                                <th style="min-width: 360px; width: 400px">Unidad Organica</th>
+                                                <th style="min-width: 200px; width: 260px">Servicio</th>
+                                                <th style="min-width: 200px; width: 200px">Cargo</th>
+                                                <th class="text-center" style="width: 80px; min-width: 80px">Estado</th>
+                                                <th class="text-center" style="width: 80px; min-width: 80px">Puntaje</th>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <button type="button" (click)="limpiarEmpleado()"
+                                                            class="btn btn-sm w-100 btn-danger waves-effect waves-light">
+                                                        Limpiar
+                                                    </button>
+                                                </td>
+                                                 <td>
+                                                    <input #inpFocus type="text" [(ngModel)]="filtros.nombre"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarEmpleado()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                 <td>
+                                                    <input #inpFocus type="text" [(ngModel)]="filtros.categoria"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarEmpleado()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                    <td>
+                                                    <input #inpFocus type="text" [(ngModel)]="filtros.unidad"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarEmpleado()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                    <td>
+                                                    <input #inpFocus type="text" [(ngModel)]="filtros.servicio"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarEmpleado()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                <td>
+                                                    <input type="text" [(ngModel)]="filtros.cargo"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarEmpleado()"
+                                                           class="form-control form-control-sm text-uppercase">
+                                                </td>
+                                                <td><input type="text" [(ngModel)]="filtros.estado"
+                                                           inputmode="text"
+                                                           (keydown.enter)="filtrarEmpleado()"
+                                                           class="form-control form-control-sm text-uppercase"></td>
+                                                <td></td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (empleado of empleados; track empleado.id) {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex gap-1 flex-wrap">
+                                                                @if (empleado.estado != '0') {
+                                                                    <button bsTooltip="evaluar"
+                                                                            (click)="Evaluar(empleado.id,empleado.idCategoria)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-info">
+                                                                        <i class="fa fa-pencil"></i></button>
+                                                                   
+                                                                    <button bsTooltip="firmar"
+                                                                            (click)="firmar()"
+                                                                            class="btn btn-sm waves-light waves-effect btn-success">
+                                                                        <i class="fa fa-file-signature"></i></button>
+                                                                     <button bsTooltip="imprimir"
+                                                                            (click)="generarPdf(empleado.id,empleado.idCategoria)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-primary">
+                                                                        <i class="fa-solid fa-print"></i></button>
+                                                                } @else {
+                                                                    <!-- <button bsTooltip="Activar"
+                                                                            (click)="abrirActivarEmpleado(empleado.id)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-success">
+                                                                        <i class="fa fa-check"></i></button> -->
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">{{ empleado.nombre }}</td>
+                                                        <td>{{ empleado.categoria }}</td>
+                                                        <td>{{ empleado.unidad }}</td>
+                                                        <td>{{ empleado.servicio }}</td>
+                                                        <td>{{ empleado.cargo }}</td>
+                                                        <td class="text-center">
+                                                            @if (empleado.estado =='1') {
+                                                                <span class="badge rounded-pill text-bg-success">
+                                                                    {{ empleado.descripcion_estado }}</span>
+                                                            } @else {
+                                                                <span class="badge rounded-pill text-bg-danger">
+                                                                    {{ empleado.descripcion_estado }}</span>
+                                                            }
+                                                        </td>
+                                                         <td>{{ empleado.puntaje }}</td>
+                                                    </tr>
+                                                } @empty {
+                                                    <tr class="text-center">
+                                                        <td colspan="5">No hay items que mostrar</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> 
+                            </div>
+                            <app-paginado [datos]="empleados" [(longitud)]="longitud" [pagina]="pagina"
+                                          (cambioVer)=" listarEvalEmpleado()"
+                                          [ver]="true" (cambioPagina)="cambioPagina($event)">
+                            </app-paginado>
+                        </app-loading>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

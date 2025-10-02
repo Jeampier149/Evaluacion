@@ -1,0 +1,208 @@
+<div #modalEditarPersonalEvaluar class="modal fade" tabIndex="-1" *teleportTo="'body'">
+    <div class="modal-dialog  modal-dialog-centered modal-md " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    @if (tipo === 1) {
+                        Nuevo Periodo
+                    } @else {
+                        Editar Personal Evaluar - {{ idPeriodo }}
+                    }</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()">
+                </button>
+            </div>
+            <div class="modal-body">
+                <app-loading [mostrar]="loading">
+                            <div class="card-body">
+                                  <div class="row">
+                                       <label class="form-label">Apellidos y Nombres</label>
+                                       <span></span>
+
+                                  </div>
+<!-- Unidad Orgánica -->
+<div class="row mt-2 align-items-center">
+    <div class="col-auto" style="min-width: 180px;">
+        <label class="form-label mb-0">Unidad Organica:</label>
+    </div>
+    <div class="col-12 mt-1">
+       <select class="form-select form-select-sm text-uppercase" [(ngModel)]="formulario.idUnidad">
+                                             @for (periodo of unidad; track periodo.cc_uniorg) {
+                                                        <option  [value]="periodo.cc_uniorg">{{ periodo.ct_uniorg }}</option>
+                                                    }
+         </select>
+    </div> 
+</div>
+
+<!-- Servicio -->
+<div class="row mt-2 align-items-center">
+    <div class="col-auto" style="min-width: 180px;">
+        <label class="form-label mb-0">Servicio:</label>
+    </div>
+    <div class="col-12 mt-1">
+       <select class="form-select form-select-sm text-uppercase" [(ngModel)]="formulario.idServicio">
+                                             @for (periodo of servicios; track periodo.cc_servicio) {
+                                                        <option  [value]="periodo.cc_servicio">{{ periodo.ct_servicio }}</option>
+                                                    }
+         </select>
+    </div>
+</div>
+
+<!-- Categoria -->
+<div class="row mt-3 align-items-center">
+    <div class="col-auto" style="min-width: 180px;">
+        <label class="form-label mb-0">Categoria:</label>
+    </div>
+    <div class="col">
+        <ng-select [(ngModel)]="formulario.idCategoria"
+                  [items]="categoria"
+                  bindLabel="ct_categoria" 
+                  bindValue="cc_categoria" 
+                  [clearable]="false" 
+                  class="form-control"
+                  style="font-size: 0.8rem; height: auto;">
+        </ng-select >	
+    </div>
+</div>
+
+<!-- Condicion Laboral -->
+<div class="row mt-1 align-items-center">
+    <div class="col-auto" style="min-width: 180px;">
+        <label class="form-label mb-0">Condicion Laboral:</label>
+    </div>
+    <div class="col">
+        <ng-select [(ngModel)]="formulario.idCondicion"
+                  [items]="condicionLaboral"
+                  bindLabel="ct_par_det" 
+                  bindValue="cc_codigo" 
+                  [clearable]="false" 
+                  class="form-control"
+                  style="font-size: 0.8rem; height: auto;">
+        </ng-select >	
+    </div>
+</div>
+
+<!-- Cargo -->
+<div class="row mt-1 align-items-center">
+    <div class="col-auto" style="min-width: 180px;">
+        <label class="form-label mb-0">Cargo:</label>
+    </div>
+    <div class="col">
+        <ng-select [(ngModel)]="formulario.idCargo"
+                  [items]="cargos"
+                  bindLabel="ct_cargo" 
+                  bindValue="cc_cargo" 
+                  [clearable]="false" 
+                  class="form-control"
+                  style="font-size: 0.8rem; height: auto;">
+        </ng-select >	
+    </div>
+</div>
+
+<!-- Nivel -->
+<div class="row mt-1 align-items-center">
+    <div class="col-auto" style="min-width: 180px;">
+        <label class="form-label mb-0">Nivel:</label>
+    </div>
+    <div class="col">
+        <ng-select [(ngModel)]="formulario.idNivel"
+                  [items]="niveles"
+                  bindLabel="cc_nivel_adm" 
+                  bindValue="cc_nivel_adm" 
+                  [clearable]="false" 
+                  class="form-control"
+                  style="font-size: 0.8rem; height: auto;">
+        </ng-select >	
+    </div>
+</div>
+
+<!-- Evaluador -->
+<div class="row mt-1 align-items-center">
+    <div class="col-auto" style="min-width: 180px;">
+        <label class="form-label mb-0">Evaluador:</label>
+    </div>
+    <div class="col">
+        <ng-select [(ngModel)]="formulario.evaluador"
+                  [items]="personal"
+                  bindLabel="nombre" 
+                  bindValue="cc_empleado" 
+                  [clearable]="false" 
+                  class="form-control"
+                  style="font-size: 0.8rem; height: auto;">
+        </ng-select >	
+    </div>
+</div>
+
+<!-- Revisor -->
+<div class="row mt-1 align-items-center">
+    <div class="col-auto" style="min-width: 180px;">
+        <label class="form-label mb-0">Revisor:</label>
+    </div>
+    <div class="col">
+        <ng-select [(ngModel)]="formulario.revisor"
+                  [items]="personal"
+                  bindLabel="nombre" 
+                  bindValue="cc_empleado" 
+                  [clearable]="false" 
+                  class="form-control"
+                  style="font-size: 0.8rem; height: auto;">
+        </ng-select >	
+    </div>
+</div>
+
+<!-- Puntaje Asistencia -->
+<div class="row mt-2 align-items-center">
+    <div class="col-auto" style="min-width: 180px;">
+        <label class="form-label mb-0">Puntaje Asistencia:</label>
+    </div>
+    <div class="col">
+        <input type="text" [(ngModel)]="formulario.puntaje_asistencia"
+              class="form-control form-control-sm">
+    </div>
+</div>
+
+<!-- Factor Asistencia -->
+<div class="row mt-2 align-items-center">
+    <div class="col-auto" style="min-width: 180px;">
+        <label class="form-label mb-0">Factor Asistencia:</label>
+    </div>
+    <div class="col">
+        <input type="text" [(ngModel)]="formulario.factor_asistencia"
+              class="form-control form-control-sm"
+              [disabled]="tipo === 2">
+    </div>
+</div>
+<!-- Unidad Orgánica -->
+<div class="row mt-1 align-items-center">
+    <div class="col-auto" style="min-width: 180px;">
+        <label class="form-label mb-0">Estado:</label>
+    </div>
+    <div class="col">
+        <ng-select [(ngModel)]="formulario.idEstado" 
+                  [items]="estados"
+                  bindLabel="ct_nombre_corto" 
+                  bindValue="cc_valor"                                                             
+                  class="form-control"
+                  style="font-size: 0.8rem; height: auto;">
+        </ng-select >	
+    </div> 
+</div>
+                              
+                                                  <div class="modal-footer mt-4">
+                                                    <button class="btn btn-primary waves-effect waves-light btn-label" type="button"
+                                                            (click)=" guardarPersonalEval()">Guardar &ensp;<i
+                                                        class="fa-solid fa-floppy-disk label-icon"></i></button>
+                                                    <button class="btn btn-danger waves-light waves-effect btn-label" type="button" (click)="closeModal()">
+                                                        Salir &ensp;<i
+                                                        class="fas fa-door-open label-icon"></i></button>
+                                                  </div>
+        
+                                 
+                            </div>
+                                      
+                </app-loading>
+            </div>
+          
+        </div>
+    </div>
+</div>
+

@@ -12,12 +12,12 @@
                     @if (data?.info_evaluacion) {
                     <tr> 
                         <td>
-                            <span><span class="label"><b>Evaluador:</b></span> {{data.info_evaluacion?.nombre_evaluador}}</span>
+                            <span><span class="label"><b>Evaluador:</b></span> {{data.info_evaluacion[0].nombre_evaluador}}</span>
                         </td>
                     </tr>
                     <tr> 
                         <td>
-                            <span><span class="label"><b>Evaluado:</b></span> {{data.info_evaluacion?.nombre_evaluado}}</span>
+                            <span><span class="label"><b>Evaluado:</b></span> {{data.info_evaluacion[0].nombre_evaluado}}</span>
                         </td>
                     </tr>
                     }
@@ -128,23 +128,23 @@
                     <div class="col-4">
                         <div class="form-group">
                             <label for="recomendaciones">Recomendaciones y/o sugerencias al Evaluado</label>
-                            <textarea class="form-control" id="recomendaciones" rows="6"[(ngModel)]="data.info_evaluacion.ct_recomendacion"></textarea>
+                            <textarea class="form-control" id="recomendaciones" rows="6"[(ngModel)]="data.info_evaluacion[0].ct_recomendacion"></textarea>
                         </div>
                     </div>
                     <div class="col-7">
                         <p>Cree Ud. que el evaluado mejoraría en su desempeño laboral con algunos cursos de capacitación</p>
                        <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="capacitacion" id="inlineRadio1" 
-                          [value]="1" [(ngModel)]="data.info_evaluacion.cfl_capacitacion">
+                          [value]="1" [(ngModel)]="data.info_evaluacion[0].cfl_capacitacion">
                     <label class="form-check-label" for="inlineRadio1">Si</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="capacitacion" id="inlineRadio2" 
-                            [value]="0" [(ngModel)]="data.info_evaluacion.cfl_capacitacion">
+                            [value]="0" [(ngModel)]="data.info_evaluacion[0].cfl_capacitacion">
                         <label class="form-check-label" for="inlineRadio2">No</label>
                     </div>
-                    @if(data.info_evaluacion.cfl_capacitacion==1){
-                        <textarea class="form-control mt-2" id="cursosSugeridos" rows="4" placeholder="Especifique los cursos sugeridos"[(ngModel)]="data.info_evaluacion.ct_capacitacion" [value]="data.info_evaluacion.ct_capacitacion"></textarea>
+                    @if(data.info_evaluacion[0].cfl_capacitacion==1){
+                        <textarea class="form-control mt-2" id="cursosSugeridos" rows="4" placeholder="Especifique los cursos sugeridos"[(ngModel)]="data.info_evaluacion[0].ct_capacitacion" [value]="data.info_evaluacion[0].ct_capacitacion"></textarea>
                     }
                        
                     </div>

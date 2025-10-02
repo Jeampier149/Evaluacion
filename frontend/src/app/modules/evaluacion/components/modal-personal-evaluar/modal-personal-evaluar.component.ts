@@ -6,12 +6,12 @@ import { PeriodoService } from '@services/evaluacion/periodo.service';
 import { AnimationStyleMetadata } from '@angular/animations';
 import { PersonalEvaluarService } from '@services/evaluacion/personal-evaluar.service';
 @Component({
-  selector: 'app-modal-personal-evaluar',
-  templateUrl: './modal-personal-evaluar.component.html',
-  styleUrl: './modal-personal-evaluar.component.scss'
+    selector: 'app-modal-personal-evaluar',
+    templateUrl: './modal-personal-evaluar.component.html',
+    styleUrl: './modal-personal-evaluar.component.scss',
 })
 export class ModalPersonalEvaluarComponent {
- @ViewChild('modalEmpleadoEvaluarNuevo') modalEl!: any;
+    @ViewChild('modalEmpleadoEvaluarNuevo') modalEl!: any;
     modal: any;
     resolve: any;
     reject: any;
@@ -21,18 +21,17 @@ export class ModalPersonalEvaluarComponent {
     tipo: number = 1; //
     loading: boolean = false;
     filtros = {
-        periodo:'',
+        periodo: '',
         apellidos: '',
-        nombre:'',
+        nombre: '',
         categoria: '',
         servicio: '',
         cargo: '',
     };
-    data:any=[]
-     empleadosSeleccionados: Set<number> = new Set();
-    todosSeleccionados: boolean = false;
-    datos:any=[]
-    constructor(private EmpleadoEvaluar$:PersonalEvaluarService) {}
+    data: any = [];
+    selectedIds: number[] = [];
+    allSelected: boolean = false;
+    constructor(private EmpleadoEvaluar$: PersonalEvaluarService) {}
 
     ngAfterViewInit() {
         this.modal = new Modal(this.modalEl.nativeElement, {
@@ -40,16 +39,16 @@ export class ModalPersonalEvaluarComponent {
             keyboard: false,
         });
     }
-   cambioPagina(pagina: number) {
+    cambioPagina(pagina: number) {
         this.pagina = pagina;
-        this. listarEmpleadosNuevos();
+        this.listarEmpleadosNuevos();
     }
 
-    openModal(tipo: number,periodo:any): Promise<boolean> {
+    openModal(tipo: number, periodo: any): Promise<boolean> {
         this.modal.show();
         this.tipo = tipo;
-        this.filtros.periodo=periodo
-        this.listarEmpleadosNuevos()
+        this.filtros.periodo = periodo;
+        this.listarEmpleadosNuevos();
         return new Promise((resolve, reject) => {
             this.resolve = resolve;
             this.reject = reject;
@@ -63,8 +62,13 @@ export class ModalPersonalEvaluarComponent {
     }
 
     listarEmpleadosNuevos() {
+        let params: any = {
+            ...this.filtros,
+            longitud: this.longitud,
+            pagina: this.pagina,
+        };
         this.loading = true;
-        this.EmpleadoEvaluar$.listarEmpleadosNuevos(this.filtros)
+        this.EmpleadoEvaluar$.listarEmpleadosNuevos(params)
             .pipe(finalize(() => (this.loading = false)))
             .subscribe(({ estado, mensaje, datos }) => {
                 if (estado) {
@@ -75,16 +79,15 @@ export class ModalPersonalEvaluarComponent {
             });
     }
 
-    
     resetModal() {
         this.tipo = 1;
         this.filtros = {
-        periodo:'',
-        apellidos: '',
-        nombre:'',
-        categoria: '',
-        servicio: '',
-        cargo: '',
+            periodo: '',
+            apellidos: '',
+            nombre: '',
+            categoria: '',
+            servicio: '',
+            cargo: '',
         };
     }
     filtrarEmpleado() {
@@ -92,63 +95,67 @@ export class ModalPersonalEvaluarComponent {
         this.listarEmpleadosNuevos();
     }
     limpiarCampos() {
- this.filtros = {
-         periodo:'',
-        apellidos: '',
-        nombre:'',
-        categoria: '',
-        servicio: '',
-        cargo: '',
+        this.filtros = {
+            periodo: '',
+            apellidos: '',
+            nombre: '',
+            categoria: '',
+            servicio: '',
+            cargo: '',
         };
- this.listarEmpleadosNuevos()
+        this.listarEmpleadosNuevos();
     }
 
     ngOnDestroy() {
         this.modal.dispose();
     }
 
-    estaSeleccionado(id: number): boolean {
-    return this.empleadosSeleccionados.has(id);
-  }
+    // Toggle para seleccionar/deseleccionar un item individual
+    toggleSelection(id: number): void {
+        const index = this.selectedIds.indexOf(id);
 
-  
-  // Alternar selección de un empleado individual
-  toggleSeleccionEmpleado(id: number): void {
-    if (this.estaSeleccionado(id)) {
-      this.empleadosSeleccionados.delete(id);
-    } else {
-      this.empleadosSeleccionados.add(id);
+        if (index === -1) {
+            // Agregar al array si no existe
+            this.selectedIds.push(id);
+        } else {
+            // Remover del array si existe
+            this.selectedIds.splice(index, 1);
+        }
+
+        // Actualizar estado del checkbox general
+        this.updateAllSelectedState();
     }
-    this.actualizarEstadoSeleccionTodos();
-  }
 
-  // Alternar selección de todos los empleados
-  toggleSeleccionTodos(){
-    if (this.todosSeleccionados) {
-      this.limpiarSeleccion();
-    } else {
-      this.seleccionarTodos();
+    // Verificar si un ID está seleccionado
+    isSelected(id: number): boolean {
+        return this.selectedIds.includes(id);
     }
-  }
 
-  // Seleccionar todos los empleados
-  seleccionarTodos() {
-    this.empleadosSeleccionados.clear();
-    this.datos.forEach((item:any) => {
-      this.empleadosSeleccionados.add(item.id);
-    });
-    this.todosSeleccionados = true;
-  }
+    // Actualizar estado del checkbox general
+    private updateAllSelectedState(): void {
+        this.allSelected =
+            this.selectedIds.length === this.data.length &&
+            this.data.length > 0;
+    }
 
-  // Deseleccionar todos los empleados
-  limpiarSeleccion() {
-    this.empleadosSeleccionados.clear();
-    this.todosSeleccionados = false;
-  }
-
-  // Actualizar el estado de "seleccionar todos"
-  actualizarEstadoSeleccionTodos(){
-    this.todosSeleccionados = this.datos.length > 0 && 
-                             this.empleadosSeleccionados.size === this.datos.length;
-  }
+    agregarEmpleadoEval(tipo: any) {
+        this.loading = true;
+        this.EmpleadoEvaluar$.agregarEmpleadoEval(
+            tipo,
+            this.filtros.periodo,
+            this.selectedIds
+        )
+            .pipe(finalize(() => (this.loading = false)))
+            .subscribe(({ estado, mensaje, datos }) => {
+                if (estado) {
+                    successAlerta('Éxito!', mensaje).then(() => {
+                        this.modal.hide();
+                        this.resolve(true);
+                        this.resetModal();
+                    });
+                } else {
+                    errorAlerta('Error!', mensaje).then();
+                }
+            });
+    }
 }

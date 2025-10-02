@@ -6,6 +6,7 @@ import { errorAlerta, successAlerta } from '@shared/utils';
 import { rutaBreadCrumb } from '@shared/components/breadcrumb/breadcrumb.component';
 import { PersonalEvaluarService } from '@services/evaluacion/personal-evaluar.service';
 import { ModalPersonalEvaluarComponent } from '@modules/evaluacion/components/modal-personal-evaluar/modal-personal-evaluar.component';
+import { ModalEditarPersonalEvaluarComponent } from '@modules/evaluacion/components/modal-editar-personal-evaluar/modal-editar-personal-evaluar.component';
 
 @Component({
   selector: 'app-personal-evaluar',
@@ -14,6 +15,7 @@ import { ModalPersonalEvaluarComponent } from '@modules/evaluacion/components/mo
 })
 export class PersonalEvaluarComponent {
     @ViewChild(ModalPersonalEvaluarComponent) modalPersonal!: ModalPersonalEvaluarComponent
+    @ViewChild(ModalEditarPersonalEvaluarComponent) modalPersonalE!: ModalEditarPersonalEvaluarComponent
     @ViewChild('inpFocus') inpFocus!: ElementRef;
     idEmpleado: string = '';
     categoria: string = '';
@@ -48,7 +50,7 @@ export class PersonalEvaluarComponent {
 
     ngOnInit(): void {
           this.listarPeriodos()
-          this.listarEmpleados();
+          this.cambiarFiltroPeriodo();
     }
 
     filtrarEmpleado() {
@@ -87,6 +89,7 @@ export class PersonalEvaluarComponent {
                 if (estado) {
                     this.periodos = datos!;
                     this.filtros.periodo=this.periodos[0].id
+                    this.listarEmpleados()
                 } else {
                     errorAlerta('Error!', mensaje).then();
                 }
@@ -107,9 +110,12 @@ export class PersonalEvaluarComponent {
  async abrirNuevoPersonalEvaluar() {
         let respuesta = await this.modalPersonal.openModal(1,this.filtros.periodo);
         if (respuesta) {
-          
+          this.listarEmpleados()
         }
     }
-
+ async abrirEditarPersonalEvaluar(id:any) {
+        let respuesta = await this.modalPersonalE.openModal(2,this.filtros.periodo,id);
+        
+    }
 
 }

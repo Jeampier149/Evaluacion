@@ -1,1 +1,384 @@
-<p>mi-evaluacion works!</p>
+
+<div class="row px-1 mx-1 my-3 mt-1 mb-5">
+       <div class="col-4">
+                        <div class="col-12">
+                            <div class="input-group input-group-sm">
+                                     <span class="input-group-text text-uppercase"><b>Periodo</b></span>
+                                         <select class="form-select form-select-sm text-uppercase" [(ngModel)]="periodo" (change)="cambiarFiltroPeriodo()">
+                                             @for (periodo of periodos; track periodo.cc_periodo) {
+                                                        <option  [value]="periodo.cc_periodo">{{ periodo.ct_periodo }}</option>
+                                                    }
+                                        </select>
+                            </div>
+                        </div>
+                            
+        </div>
+
+                      <div class="card-body mt-5">
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link active" data-bs-toggle="tab" href="#home" role="tab" aria-selected="true">
+                                                    <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                                    <span class="d-none d-sm-block">Evaluacion </span>    
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link" data-bs-toggle="tab" href="#profile" role="tab" aria-selected="false" tabindex="-1">
+                                                    <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                                    <span class="d-none d-sm-block">Oficina Personal</span>    
+                                                </a>
+                                            </li>
+                                           
+                                        </ul>
+        
+                                        <!-- Tab panes -->
+                                        <div class="tab-content p-3 text-muted">
+                                            <div class="tab-pane active show" id="home" role="tabpanel">
+                                                   <div class="card mt-1">
+        <div class="card-body">
+            @if (periodo) {
+            <h4 class="text-center pb-2 border-bottom">
+                EVALUACIÓN DE DESEMPEÑO Y CONDUCTA LABORAL - {{ periodo }}
+            </h4>
+             }
+            <div class="row d-flex justify-content-around">
+                <div class="col-6">
+             <table class="mt-4 enc">
+                <tbody class="justify-content-center">
+                    @if (data?.info_evaluacion) {
+                    <tr> 
+                        <td>
+                            <span><span class="label"><b>Semestre: </b></span><span>{{data.info_evaluacion[0].periodo_nombre}}</span> </span>
+                        </td>
+                    </tr>
+                    
+                    <tr> 
+                        <td>
+                            <span><span class="label"><b>Evaluado:</b></span><span>{{data.info_evaluacion[0].nombre_evaluado}}</span> </span>
+                        </td>
+                    </tr>
+                    <tr> 
+                        <td>
+                            <span><span class="label"><b>Cargo:</b></span><span>{{data.info_evaluacion[0].cargo}}</span> </span>
+                        </td>
+                    </tr>
+                     <tr> 
+                        <td>
+                            <span><span class="label"><b>Departamemto/Oficina:</b></span> <span>{{data.info_evaluacion[0].unidad}}</span></span>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+                </div>
+                  <div class="col-6">
+                   <table class="mt-4 enc">
+                <tbody class="justify-content-center">
+                    @if (data?.info_evaluacion) {
+                   <tr>   
+                        <td>
+                            <span><span class="label"><b>Evaluador:</b></span> <span>{{data.info_evaluacion[0].nombre_evaluador}}</span></span>
+                        </td>
+                    </tr>
+                   
+                    <tr> 
+                        <td>
+                            <span><span class="label"><b>Fecha Evaluador:</b></span><span></span> {{data.info_evaluacion[0].fecha_evaluacion}}</span>
+                        </td>
+                    </tr>
+                    <tr> 
+                        <td>
+                            <span><span class="label"><b>Revisor:</b></span> <span></span>{{data.info_evaluacion[0].nombre_revisor}}</span>
+                        </td>
+                    </tr>
+                     <tr> 
+                        <td>
+                            <span><span class="label"><b>Fecha Revisor</b></span> <span></span>{{data.info_evaluacion[0].fecha_reevaluacion}}</span>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table> 
+                </div>
+            </div>
+             
+        </div>
+    </div> 
+
+    <!-- Tab panes -->
+    <div class="tab-content p-0 text-muted m-0">
+        <div class="tab-pane active show" id="home-1" role="tabpanel">
+            <div class="mt-4">
+                @if (loading) {
+                    <div class="text-center py-4">Cargando evaluación...</div>
+                } @else if (data?.factores) {
+                <table class="table table-bordered text-center align-middle">
+                    <thead>
+                        <tr>
+                            @if(this.categoria=='05'){ <th>ESCALA DE EVALUACIÓN</th>}
+                            <th>FACTORES ÚNICOS</th>
+                            <th>I @if(this.categoria=='05'){ <br> Excelente <br>(18 a 20) }</th>
+                            <th>II @if(this.categoria=='05'){ <br> Bueno <br>(14 a 17) }</th>
+                            <th>III @if(this.categoria=='05'){ <br> Regular <br>(11 a 13) }</th> 
+                            <th>IV @if(this.categoria=='05'){ <br> Deficiente<br>(0 a 10) }</th>
+                            @if(this.categoria!=='05'){ <th>V</th>}    
+                            <th style="width: 100px; max-width: 100px;">Calificación Evaluador</th>
+                            <th style="width: 100px; max-width: 100px;">Calificación Revisor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (factor of data.factores; track factor.id_factor; let i = $index) {
+                        <!-- Fila de descripciones -->
+                        <tr>
+                            @if(this.categoria=='05'){  <td [attr.rowspan]="this.categoria=='05' ? 3 : null"> <b></b> {{ factor.ct_escala }}</td>}
+         
+                            <td class="text-start" rowspan="3"> 
+                                <b>{{i + 1 }}.- {{ factor.factor }}</b>
+                                {{ factor.descripcion_factor }}
+                            </td>
+
+                            @for (criterio of factor.criterios; track criterio.id_factor_criterio) {
+                            <td class="text-center align-top">
+                                {{ criterio.descripcion_factor_criterio }}
+                            </td>
+                            }
+
+                            <!-- Puntaje Evaluador -->
+                            <td rowspan="3">
+                                @if(this.categoria=='05'){
+                                <select class="form-select" aria-label="Default select example" 
+                                    [(ngModel)]="factor.puntaje_asig" 
+                                    (change)="actualizarPuntajeDesdeSelect(factor, 'evaluador')">
+                                    <option ></option>
+                                    <option *ngFor="let num of factor.valoresEvaluador" 
+                                        [ngValue]="num">
+                                        {{ num }}
+                                    </option>
+                                </select>   
+                                } @else {
+                                   <span class="dark" > {{ factor.puntaje_asig | number:'1.2-2'}} </span>  
+                                }
+                            </td>
+
+                            <!-- Puntaje Revisor -->
+                            <td rowspan="3"> 
+                                @if(this.categoria=='05'){
+                                <select class="form-select" aria-label="Default select example" 
+                                    [(ngModel)]="factor.puntaje_asig_revisor" 
+                                    (change)="actualizarPuntajeDesdeSelect(factor, 'revisor')">
+                                    <option ></option>
+                                    <option *ngFor="let num of factor.valoresRevisor" 
+                                        [ngValue]="num">
+                                        {{ num }}
+                                    </option>
+                                </select>   
+                                } @else {
+                                   <span class="purple" > {{ factor.puntaje_asig_revisor | number:'1.2-2'}}  </span>  
+                                }
+                            </td>
+                        </tr>
+  
+                        <!-- Fila de radios para Evaluador -->
+              
+                        <tr class="fila-radios">                                                                
+                            @for (criterio of factor.criterios; track criterio.id_factor_criterio) {
+                            <td class="text-center">
+                                <input
+                                    class="  evaluador form-check-input radio-lg"
+                                    type="radio"
+                                    [disabled]="true"
+                                    name="factor_evaluador_{{ factor.id_factor }}"  
+                                    id="crit_evaluador_{{ criterio.id_factor_criterio }}"
+                                    [value]="criterio.desde"
+                                    [checked]="factor.id_factor_criterio == criterio.id_factor_criterio"
+                                    (change)="categoria == '05' ? 
+                                                asignarPuntajeCas(criterio.desde, criterio.hasta, factor, criterio.id_factor_criterio, 'evaluador') : 
+                                                asignarPuntaje(factor, criterio.desde, criterio.id_factor_criterio, criterio.hasta, 'evaluador')"
+                                >
+                            </td>
+                            }
+
+                            
+                        </tr>
+
+                        <!-- Fila de radios para Revisor -->
+                       
+                        <tr class="fila-radios">                                                                
+                            @for (criterio of factor.criterios; track criterio.id_factor_criterio) {
+                            <td class="text-center">
+                                <input
+                                    class="form-check-input radio-lg"
+                                    type="radio"
+                                    [disabled]="true"
+                                    name="factor_revisor_{{ factor.id_factor }}"  
+                                    id="crit_revisor_{{ criterio.id_factor_criterio }}"
+                                    [value]="criterio.desde"
+                                    [checked]="factor.id_factor_criterio_revisor == criterio.id_factor_criterio"
+                                    (change)="categoria == '05' ? 
+                                                asignarPuntajeCas(criterio.desde, criterio.hasta, factor, criterio.id_factor_criterio, 'revisor') : 
+                                                asignarPuntaje(factor, criterio.desde, criterio.id_factor_criterio, criterio.hasta, 'revisor')"
+                                >
+                            </td>
+                            }
+                        </tr>
+                        }
+                        <tr>
+                            <td [attr.colspan]="this.categoria=='05' ? 7 : 6" style="text-align: right;"> <b>TOTAL</b></td>
+                            <td><b>{{ puntajeTotalEvaluador() | number:'1.2-2'}}</b></td>
+                            <td><b>{{ puntajeTotalRevisor() | number:'1.2-2'}}</b></td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+                          <div class="row mt-5">
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="recomendaciones">Recomendaciones y/o sugerencias al Evaluado</label>
+                            <textarea class="form-control"  [disabled]="true" id="recomendaciones" rows="6"[(ngModel)]="data.info_evaluacion[0].ct_recomendacion"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <p>Cree Ud. que el evaluado mejoraría en su desempeño laboral con algunos cursos de capacitación</p>
+                       <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="capacitacion" id="inlineRadio1" 
+                          [value]="1" [(ngModel)]="data.info_evaluacion[0].cfl_capacitacion" [disabled]="true">
+                    <label class="form-check-label" for="inlineRadio1">Si</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="capacitacion" id="inlineRadio2" 
+                            [value]="0" [(ngModel)]="data.info_evaluacion[0].cfl_capacitacion" [disabled]="true">
+                        <label class="form-check-label" for="inlineRadio2">No</label>
+                    </div>
+                    @if(data.info_evaluacion[0].cfl_capacitacion==1){
+                        <textarea class="form-control mt-2" id="cursosSugeridos" rows="4"[disabled]="true" placeholder="Especifique los cursos sugeridos"[(ngModel)]="data.info_evaluacion[0].ct_capacitacion" [value]="data.info_evaluacion[0].ct_capacitacion"></textarea>
+                    }
+                       
+                    </div>
+                </div>
+                <div class="row mt-5">
+              
+                    <div class="col-7">
+                        <p>Conforme :</p>
+                       <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="conforme" id="conforme1" 
+                          [value]="1" [(ngModel)]="data.info_evaluacion[0].cfl_conforme_eva" >
+                    <label class="form-check-label" for="inlineRadio1">Si</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="conforme" id="conforme2" 
+                            [value]="0" [(ngModel)]="data.info_evaluacion[0].cfl_conforme_eva" >
+                        <label class="form-check-label" for="inlineRadio2">No</label>
+                    </div>
+                    
+                        <textarea class="form-control mt-2" id="cursosSugeridos" rows="4" placeholder="Comentario"[(ngModel)]="data.info_evaluacion[0].ct_conforme_eva" [value]="data.info_evaluacion[0].ct_conforme_eva"></textarea>
+                    
+                       
+                    </div>
+                </div>
+                <div class="row d-flex justify-content-center mt-5">
+                    <div class="col-2">
+                        <button type="button" class="btn btn-primary" (click)="guardarEvaluacion()">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                    </div>
+                </div> 
+                } @else {
+                    <div class="text-center py-4">No hay datos de evaluación disponibles</div>
+                }                                              
+            </div>
+        </div>
+       
+       
+    </div>
+
+
+
+                                            </div>
+                                            <div class="tab-pane" id="profile" role="tabpanel">
+                                                <div class="row d-flex justify-content-center mt-4">
+                                                    <div class="col-3 mt-5 svg">
+                                                        <img src="assets/img/eval2.svg" alt="" class="imagen">
+                                                    </div>
+                                                    <div class="col-6 me-4">
+                                    <div class="table-responsive">
+                                                            <table class="table table-borderless mb-0 personal">
+
+                                                                <thead>
+                                                                    <tr>
+                                                                
+                                                                        <th>CRITERIOS</th>
+                                                                        <th style="text-align: center;">PUNTAJES DE EVALUACIÓN</th>
+                                                                    
+                                                                    </tr>
+                                                                </thead> 
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th scope="row">Desempeño y Conducta Laboral</th>
+                                                                        <td><span class="badge rounded-pill bg-dark">{{data.info_evaluacion[0].ni_puntaje_dcl | number:'1.2-2'}}</span></td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">Asistencia</th>
+                                                                        <td><span class="badge rounded-pill bg-dark">{{data.info_evaluacion[0].ni_puntaje_asi | number:'1.2-2'}}</span></td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">Puntualidad</th>
+                                                                        <td><span class="badge rounded-pill bg-dark">{{data.info_evaluacion[0].ni_puntaje_pun | number:'1.2-2'}}</span></td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">Capacitación</th>
+                                                                        <td><span class="badge rounded-pill bg-dark">{{data.info_evaluacion[0].ni_puntaje_cap | number:'1.2-2'}}</span></td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><hr></td> 
+                                                                        <td><hr></td>
+                                                                    </tr>
+                                                                     <tr>
+                                                                        <th scope="row">Total</th>
+                                                                        <td>
+                                                                            <span class="badge rounded-pill "
+                                                                           [ngClass]="{
+                                                                            'bg-success': valor=='EXCELENTE'|| valor=='SUPERIOR',
+                                                                            'bg-warning': valor=='verde',
+                                                                            'bg-danger': valor=='verde',
+                                                                            }">
+                                                                            
+                                                                                {{data.info_evaluacion[0].ni_puntaje_cap + 
+                                                                                   data.info_evaluacion[0].ni_puntaje_pun+
+                                                                                   data.info_evaluacion[0].ni_puntaje_asi +
+                                                                                   data.info_evaluacion[0].ni_puntaje_dcl
+                                                                                   | number:'1.2-2'}}</span></td>
+
+                                                                    </tr>
+                                                                     <tr>
+                                                                        <th scope="row">Rango Calificación</th>
+                                                                        <td><span class="badge rounded-pill bg-dark  ">{{ generarCalificacion()}}</span></td>
+                                                                    </tr>
+                                                                   
+                                                                </tbody>
+                                                            </table>
+                                    </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-5">
+                                                    <div class="col-5">
+                                                        <label for="O">Observaciones:</label>
+                                                       <textarea class="form-control mt-2" id="cursosSugeridos" [disabled]="true"rows="4" placeholder="Comentario"[(ngModel)]="data.info_evaluacion[0].ct_conforme_eva" [value]="data.info_evaluacion[0].ct_conforme_eva"></textarea>   
+                                                    </div>
+                                                   
+                                                </div>
+                              
+                                            </div>
+                                            <div class="tab-pane" id="messages" role="tabpanel">
+                                               
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+ 
+</div>
+

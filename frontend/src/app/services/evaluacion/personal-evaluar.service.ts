@@ -35,30 +35,39 @@ export class PersonalEvaluarService {
         });
     }
   
-     guardarEvaluar(data: any): Observable<HttpResponseApi> {
-            return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/guardar-evaluar', {data},
+     agregarEmpleadoEval(tipo:any,periodo: any, data?:any): Observable<HttpResponseApi> {
+            return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/agregar-empleado-eval', {tipo,periodo,data},
                 {responseType: "json"}
             );
         }
 
+
+     obtenerEmpleadoEval(id:any,periodo: any): Observable<HttpResponseApi> {
+            return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/obtener-data-empleado', {periodo,id},
+                {responseType: "json"}
+            );
+        }    
           
 
+     obtenerSelects(): Observable<HttpResponseApi> {
+            return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/obtener-data-selects', {},
+                {responseType: "json"}
+            );
+        }    
 
 
-
-
-
-
-
-
-
-        
-     editarEvaluar(params: any): Observable<HttpResponseApi> {
-            return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/editar-evaluar', {...params},
+     editarEmpleadoEval(params: any,periodo:any,empleado:any): Observable<HttpResponseApi> {
+            return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/editar-personal-evaluar', {...params,periodo,empleado},
                 {responseType: "json"}
             );
         }
     
+
+
+
+
+
+
     anularEvaluar(idEvaluar: string, motivo: string): Observable<HttpResponseApi> {
         return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/anular-evaluar', {idEvaluar, motivo},
             {responseType: "json"}

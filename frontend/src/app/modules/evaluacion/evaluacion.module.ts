@@ -13,6 +13,10 @@ import { EvaluarComponent } from './pages/evaluar/evaluar.component';
 import { FormularioEvaluarComponent } from './pages/formulario-evaluar/formulario-evaluar.component';
 import { PersonalEvaluarComponent } from './pages/personal-evaluar/personal-evaluar.component';
 import { ModalPersonalEvaluarComponent } from './components/modal-personal-evaluar/modal-personal-evaluar.component';
+import { ModalEditarPersonalEvaluarComponent } from './components/modal-editar-personal-evaluar/modal-editar-personal-evaluar.component';
+import { MiEvaluacionComponent } from './pages/mi-evaluacion/mi-evaluacion.component';
+import { RevisorComponent } from './pages/revisor/revisor.component';
+import { FormularioEvaluarRevisorComponent } from './pages/formulario-evaluar-revisor/formulario-evaluar-revisor.component';
 
 
 
@@ -23,7 +27,11 @@ import { ModalPersonalEvaluarComponent } from './components/modal-personal-evalu
  EvaluarComponent,
  FormularioEvaluarComponent,
  PersonalEvaluarComponent,
- ModalPersonalEvaluarComponent
+ ModalPersonalEvaluarComponent,
+ ModalEditarPersonalEvaluarComponent,
+ MiEvaluacionComponent,
+ RevisorComponent,
+ FormularioEvaluarRevisorComponent
 
   ],
   imports: [
@@ -33,7 +41,7 @@ import { ModalPersonalEvaluarComponent } from './components/modal-personal-evalu
               TablaComponent,
               LoadingComponent,
               PaginacionComponent,
-                NgSelectModule
+              NgSelectModule
   ]
 })
 export class EvaluacionModule { }

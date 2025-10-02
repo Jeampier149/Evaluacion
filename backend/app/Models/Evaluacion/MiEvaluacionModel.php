@@ -10,7 +10,7 @@ use PDO;
 use stdClass;
 
 
-class EvaluarModel extends Model
+class MiEvaluacionModel extends Model
 {
     use HasFactory;
 
@@ -48,37 +48,34 @@ class EvaluarModel extends Model
         return $resultados;
     }
 
-    public function listarEvaluarRevisor(stdClass $params, $codigo, $perfil): array
+
+
+    public function listarPeriodosMiEvaluacion($empleado)
     {
         $smtp = $this->conexion->getPdo()->prepare(
         /** @lang SQL */
-        'EXEC dbo.eval_sp_lst_pg_evaluar_revisor ?,?,?,?,?,?,?,?,?,?,?');
-        $smtp->bindParam(1, $codigo);
-        $smtp->bindParam(2, $perfil);
-        $smtp->bindParam(3, $params->empleado);
-        $smtp->bindParam(4, $params->categoria);
-        $smtp->bindParam(5, $params->unidad);
-        $smtp->bindParam(6, $params->servicio);
-        $smtp->bindParam(7, $params->cargo);
-        $smtp->bindParam(8, $params->estado);
-        $smtp->bindParam(9, $params->periodo);
-        $smtp->bindParam(10, $params->longitud);
-        $smtp->bindParam(11, $params->pagina);
+        'EXEC dbo.eval_sp_lst_periodos_mi_evaluacion ?');
+        $smtp->bindParam(1, $empleado);
         $smtp->execute();
         $resultados = $smtp->columnCount() > 0 ? $smtp->fetchAll(PDO::FETCH_ASSOC) : [];
         $smtp->closeCursor();
         return $resultados;
     }
 
-    public function listarPeriodo(): array
+
+    public function listarEvalForm(string $idCategoria): array
     {
         $smtp = $this->conexion->getPdo()->prepare(
-        /** @lang SQL */
-        'EXEC dbo.eval_sp_lst_periodos');
+            /** @lang SQL */
+            'EXEC dbo.eval_sp_lst_evaluar_form ?'
+        );
+        $smtp->bindParam(1, $idCategoria);
         $smtp->execute();
-        $resultados = $smtp->columnCount() > 0 ? $smtp->fetchAll(PDO::FETCH_ASSOC) : [];
+
+        $json = $smtp->fetchColumn(); // <- ahora será string
         $smtp->closeCursor();
-        return $resultados;
+
+        return $json ? json_decode($json, true) : [];
     }
 
     public function listarEvalFormF(stdClass $params): array
@@ -97,9 +94,6 @@ class EvaluarModel extends Model
 
         $data = json_decode($json, true);
 
-        if (isset($data['info_evaluacion']) && is_string($data['info_evaluacion'])) {
-            $data['info_evaluacion'] = json_decode($data['info_evaluacion'], true);
-        }
 
         return $data;
     }
@@ -183,45 +177,41 @@ class EvaluarModel extends Model
         return ['1', 'ok', $resultados];
     }
 
-  public function guardarEvaluarRevisor(
-        $periodo,
-        $empleado,
-        $id_factor,
-        $id_factor_criterio,
-        $cfl_evaluador,
-        $puntaje_asignado,
-        $puntaje_rev,
-        $ct_recomendacion,
-        $cfl_capacitacion,
-        $ct_capacitacion,
-        $usuario,
-        $equipo
-    ) {
+
+
+    public function anularEvaluar(string $id, string $motivo, $usuario, $perfil, $equipo): array
+    {
         $smtp = $this->conexion->getPdo()->prepare(
         /** @lang SQL */
-        'EXEC dbo.sp_insertar_crit_per_emp_revisor ?,?,?,?,?,?,?,?,?,?,?,?');
-
-        $smtp->bindParam(1, $periodo);
-        $smtp->bindParam(2, $empleado);
-        $smtp->bindParam(3, $id_factor);
-        $smtp->bindParam(4, $id_factor_criterio);
-        $smtp->bindParam(5, $cfl_evaluador);
-        $smtp->bindParam(6, $puntaje_asignado);
-        $smtp->bindParam(7, $puntaje_rev);
-        $smtp->bindParam(8, $ct_recomendacion);
-        $smtp->bindParam(9, $cfl_capacitacion);
-        $smtp->bindParam(10, $ct_capacitacion);
-        $smtp->bindParam(11, $usuario);
-        $smtp->bindParam(12, $equipo);
-        // $smtp->bindParam(6, $estado, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 1);
-        // $smtp->bindParam(7, $mensaje, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 300);
+        'EXEC dbo.datg_sp_upd_estado_pg_cargo 1,?,?,?,?,?,?,?');
+        $smtp->bindParam(1, $id);
+        $smtp->bindParam(2, $motivo);
+        $smtp->bindParam(3, $usuario);
+        $smtp->bindParam(4, $perfil);
+        $smtp->bindParam(5, $equipo);
+        $smtp->bindParam(6, $estado, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 1);
+        $smtp->bindParam(7, $mensaje, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 300);
         $smtp->execute();
-        $resultados = $smtp->columnCount() > 0 ? $smtp->fetchAll(PDO::FETCH_COLUMN) : '';
+        $resultados = $smtp->columnCount() > 0 ? $smtp->fetch(PDO::FETCH_ASSOC) : '';
         $smtp->closeCursor();
-        return ['1', 'ok', $resultados];
+        return [$estado, trim($mensaje), $resultados ?? ''];
     }
 
-
-
- 
+    public function activarEvaluar(string $id, $usuario, $perfil, $equipo): array
+    {
+        $smtp = $this->conexion->getPdo()->prepare(
+        /** @lang SQL */
+        'EXEC dbo.datg_sp_upd_estado_pg_cargo 2,?,?,?,?,?,?,?');
+        $smtp->bindParam(1, $id);
+        $smtp->bindValue(2, '');
+        $smtp->bindParam(3, $usuario);
+        $smtp->bindParam(4, $perfil);
+        $smtp->bindParam(5, $equipo);
+        $smtp->bindParam(6, $estado, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 1);
+        $smtp->bindParam(7, $mensaje, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 300);
+        $smtp->execute();
+        $resultados = $smtp->columnCount() > 0 ? $smtp->fetch(PDO::FETCH_ASSOC) : '';
+        $smtp->closeCursor();
+        return [$estado, trim($mensaje), $resultados ?? ''];
+    }
 }

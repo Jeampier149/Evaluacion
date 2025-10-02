@@ -12,6 +12,7 @@ use App\Http\Controllers\DatosGenerales\EmpleadoController;
 use App\Http\Controllers\DatosGenerales\ServicioController;
 use App\Http\Controllers\DatosGenerales\UnidadController;
 use App\Http\Controllers\Evaluacion\EvaluarController;
+use App\Http\Controllers\Evaluacion\MiEvaluacionController;
 use App\Http\Controllers\Evaluacion\PeriodoController;
 use App\Http\Controllers\Evaluacion\PersonalEvaluarController;
 use App\Http\Controllers\Formatos\FormatoCabController;
@@ -165,16 +166,31 @@ Route::controller(FormatoCriterioController::class)->group(function () {
 Route::controller(EvaluarController::class)->group(function () {
     Route::get('evaluacion/evaluar/lista-evaluar', 'listarEvaluar');
     Route::get('evaluacion/evaluar/lista-periodos', 'listarPeriodos');
-    Route::get('evaluacion/evaluar/lista-eval-form', 'listarEvalForm');
     Route::get('evaluacion/evaluar/lista-eval-form-f', 'listarEvalFormF');
+    
     Route::get('evaluacion/evaluar/generarPdf-Evaluacion', 'generarPdfEval');
     Route::get('evaluacion/evaluar/listar-historial', 'listarHistorial');
     Route::post('evaluacion/evaluar/guardar-evaluar', 'guardarEvaluar');
+    
+    Route::get('evaluacion/evaluar/lista-evaluar-revisor', 'listarEvaluarRevisor');
+     Route::post('evaluacion/evaluar/guardar-evaluar-revisor', 'guardarEvaluarRevisor');
+
+
 });
 Route::controller(PersonalEvaluarController::class)->group(function () {
     Route::get('evaluacion/evaluar/listar-personal-evaluar', 'listarPersonal');
     Route::get('evaluacion/evaluar/listar-personal-nuevo-evaluar', 'listarPersonalNuevo');
-
-   
+    Route::post('evaluacion/evaluar/agregar-empleado-eval', 'agregarEmpEval');
+    Route::post('evaluacion/evaluar/obtener-data-empleado', 'obtenerDataEval');
+    Route::post('evaluacion/evaluar/obtener-data-selects', 'obtenerSelects');
+    Route::post('evaluacion/evaluar/editar-personal-evaluar', 'editarPersonalEval');
+});
+Route::controller(MiEvaluacionController::class)->group(function () {
+    Route::get('evaluacion/evaluar/lista-evaluar', 'listarEvaluar');
+    Route::get('evaluacion/evaluar/lista-periodos-mi-evaluacion', 'listarPeriodosMiEvaluacion');
+    Route::get('evaluacion/evaluar/lista-eval-form', 'listarEvalForm');
+    Route::get('evaluacion/evaluar/lista-eval-form-f', 'listarEvalFormF');
+    Route::get('evaluacion/evaluar/generarPdf-Evaluacion', 'generarPdfEval');
+    Route::get('evaluacion/evaluar/listar-historial', 'listarHistorial');
 
 });
