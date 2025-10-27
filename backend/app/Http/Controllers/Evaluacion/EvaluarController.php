@@ -10,12 +10,15 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Mpdf\Mpdf;
 use stdClass;
+use App\Models\Utilidades\Compresor7ZipModel;
+use App\Models\Utilidades\FTPModel;
+use App\Models\Utilidades\RefirmaModel;
 
 class EvaluarController extends JSONResponseController
 {
     public function __construct()
     {
-        $this->middleware('auth:sanctum');
+        $this->middleware('auth:sanctum')->except(['guardarLoteFirmado']);
     }
 
     public function listarEvaluar(Request $request): JsonResponse
@@ -101,6 +104,78 @@ class EvaluarController extends JSONResponseController
         $resultado = $perfilModel->listarEvalFormF($params);
         return $this->sendResponse(200, true, '', $resultado);
     }
+    public function obtenerArgumentosFirma(Request $request) {
+        $datos = $request->post('data');
+        $periodo = $request->post('periodo');
+        $compresor = new Compresor7ZipModel();
+            $nombre7z = 'comprimido_' . time();
+            $carpetaTemp = 'carpeta_' . time();
+            mkdir(storage_path() . '/app/temp/' . $carpetaTemp);
+            $compresor->crearComprimido($nombre7z, storage_path('app/public'));
+           
+            foreach ($datos as $dato) {
+
+                $params = new stdClass();
+                $params->periodo = $dato['periodo'] ?? '';
+                $params->idEmpleado = $dato['idEmpleado'] ?? '';
+                $params->categoria = $dato['categoria'] ?? '';
+                $perfilModel = new EvaluarModel();
+                $resultado = $perfilModel->generarPdfEval($params);
+                
+                $mpdf = new Mpdf([
+                    'mode' => 'utf-8',
+
+                    'format' => 'A4',
+                    'margin_left' => 10,
+                    'margin_right' => 10,
+                    'margin_top' => 10,
+                    'margin_bottom' => 10,
+                    'margin_header' => 5,
+                    'margin_footer' => 5,
+                ]);
+
+                $mpdf->SetDisplayMode('fullpage');
+
+                $html = $this->getHtmlContent($resultado);
+
+                // Output the PDF
+                $nombre = $params->idEmpleado . '_' . $params->periodo . '.pdf';
+                $css = file_get_contents(resource_path('css\\evaluacion\\reporteEval.css')); // css
+                $mpdf->WriteHTML($css, 1);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output(storage_path() . '/app/temp/' . $carpetaTemp . '/' . $nombre, 'F');
+            }
+            
+            $compresor->agregarCarpeta(storage_path() . '/app/temp/' . $carpetaTemp . '/');
+            $compresor->cerrarComprimido();
+            
+            $pdfs = scandir(storage_path() . '/app/temp/' . $carpetaTemp);
+            foreach ($pdfs as $pdf) {
+                if ($pdf === '.' or $pdf === '..') {
+                    continue;
+                }
+                unlink(storage_path() . '/app/temp/' . $carpetaTemp . '/' . $pdf);
+            }
+            rmdir(storage_path() . '/app/temp/' . $carpetaTemp);
+
+            $archivo = $nombre7z . '.7z';
+
+            $archivoF = str_replace('.7z', '[FP].7z', $archivo);
+            // Generar argumento para el firmador
+            $refirmaModel = new RefirmaModel();
+            $refirmaModel
+                ->setIsHttps(env('APP_ENV') === 'production' ? true : false)
+                ->setPosX(30)
+                ->setPosY(650)
+                ->setPagina(1)
+                ->setIsVisible(true);
+            $argumento = $refirmaModel->obtenerArgumentosZIPInvoker($archivo,
+                $archivoF,
+                '/storage/',
+                '/api/evaluacion/evaluar/guardar-lote-firmado?archivo=' . $archivo  .'&periodo=' .$periodo  );
+        return $this->sendResponse(200, true, 'Argumento', $argumento);
+
+    }
     public function generarPdfEval(Request $request)
     {
         $params = new stdClass();
@@ -109,9 +184,8 @@ class EvaluarController extends JSONResponseController
         $params->categoria = $request->get('categoria') ?? '';
         $perfilModel = new EvaluarModel();
         $resultado = $perfilModel->generarPdfEval($params);
-        // echo '<pre>';
-        // var_dump($resultado);
-        // echo '</pre>';
+     
+    
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
             'format' => 'A4',
@@ -134,8 +208,10 @@ class EvaluarController extends JSONResponseController
         $mpdf->Output();
     }
     private function getHtmlContent($data)
-    {
-        $info = $data['info_evaluacion'];
+    {  
+
+        $info = $data['info_evaluacion'][0];
+
         $factores = $data['factores'];
 
         // Obtener semestre y año del periodo
@@ -170,13 +246,14 @@ class EvaluarController extends JSONResponseController
                     <td width="30%">Apellidos y Nombres:</td>
                     <td width="70%">' . $info['nombre_evaluado'] . '</td>
                 </tr>
+
                 <tr>
                     <td>Cargo:</td>
-                    <td>[CARGO]</td> <!-- Deberías tener este dato en tu BD -->
+                    <td>' .$info['cargo'].'</td> 
                 </tr>
                 <tr>
                     <td>Dirección/Oficina:</td>
-                    <td>[DIRECCIÓN/OFICINA]</td> <!-- Deberías tener este dato en tu BD -->
+                    <td>' .$info['unidad'].'</td> 
                 </tr>
             </table>
             
@@ -196,16 +273,25 @@ class EvaluarController extends JSONResponseController
                     ' . $this->getFactoresRows($factores) . '
                     <tr>
                         <td colspan="6" class="text-right bold">Total</td>
-                        <td class="text-center">' . $info['ni_puntaje_dcl'] . '</td>
+                        <td class="text-center">'. $info['ni_puntaje_dcl'] . '</td>
                     </tr>
                 </tbody>
             </table>
             
             <div style="margin-top: 10px;">
                 <div>Nombre y Apellido del Evaluador: ' . $info['nombre_evaluador'] . '</div>
-                <div>Cargo y Nivel del Evaluador: [CARGO_EVALUADOR]</div> <!-- Deberías tener este dato en tu BD -->
-            </div>
+                <div>Cargo y Nivel del Evaluador: ' . $info['cargo_evaluador'] . '
+                <div>Recomendaciones y/o sugerencias al Evaluado: ' . $info['ct_recomendacion'] . '</div>
+                <div>Cree Ud. que el evaluado mejoraría en su desempeño laboral con algunos cursos de capacitación.: ' . $info['ct_recomendacion'] . '</div>
             
+            </div>
+            <div style="margin-top: 10px;">
+                <div>Del Evaluado:: ' . ($info['cfl_conforme_eva']==1?'<span>Conforme</span>':'<span>No Conforme</span>') . '</div>'
+                .($info['cfl_conforme_eva']==1? '<div>Observaciones:'.$info['ct_conforme_eva'].'</div>' :'' ).
+
+            '*Nota: EN CASO DE INCONFORMIDAD, ADJUNTAR LAS OBSERVACIONES Y SUSTENTOS RESPECTIVOS
+            </div>
+
            
         </body>
         </html>';
@@ -371,5 +457,98 @@ class EvaluarController extends JSONResponseController
 
        
     }
+ 
+  
+    public function guardarLoteFirmado(Request $request){
+        $archivo = (string)$request->get('archivo');
+        $periodo = (string)$request->get('periodo');
+        $rutaArchivo = storage_path('app/public/');
+        $rutaTemp = storage_path('app/temp/');
+        $carpeta = str_replace('.7z', '', $archivo);
+        // Borrar comprimido publico
+        if (file_exists($rutaArchivo . $archivo)) {
+            unlink($rutaArchivo . $archivo);
+        }
+        if ($_FILES['signed_file']) {
+            $nombreTemp = $_FILES['signed_file']['tmp_name'];
+            // Descomprimir el archivo
+            move_uploaded_file($nombreTemp, storage_path('app/temp/') . $archivo);
+            $compresor = new Compresor7ZipModel();
+            $compresor->descomprimirArchivo($archivo, $rutaTemp, $rutaTemp . $carpeta);
+            // Borrar comprimido
+            if (file_exists(storage_path('app/temp/') . $archivo)) {
+                unlink(storage_path('app/temp/') . $archivo);
+            }
+            // //Subir FTP y BD
+             $archivos = scandir($rutaTemp . $carpeta);
+             foreach ($archivos as $archivo) {
+                 if ($archivo === '..' || $archivo === '.') {
+                     continue;
+                 }
+
+            
+                // Extraer del nombre del archivo datos para su guardado
+             $split = explode('_', str_replace(['[FP].pdf', '[R].pdf'], '', $archivo));
+             $cc_empleado = $split[0];
+
+    
+             // Agregar al nombre del archivo el final FP (Firmado)
+             $nombre = str_replace(['_' . $cc_empleado . '[FP].pdf', '_' . $cc_empleado . '[R].pdf'], '[FP].pdf', $archivo);
+            //Subir FTP
+             $ftpModel = new FTPModel();
+             rename($rutaTemp . $carpeta . '/' . $archivo, $rutaTemp . $carpeta . '/' . $nombre);
+             $flag = $ftpModel->subirArchivo('evalu/'.$periodo, $nombre, $rutaTemp . $carpeta);
+             if ($flag) {
+                    $resultadoModel = new EvaluarModel();
+                    $resultadoModel->guardarEvaluacionFirmado($periodo, $cc_empleado, $nombre);
+             }
+             //Borrar archivos y carpetas
+             unlink($rutaTemp . $carpeta . '/' . $nombre);
+         }
+         rmdir($rutaTemp . $carpeta);
+        }
+    }
+   
+     public function imprimirFichaEvaluacion(Request $request) {
+        $validacion = Validator::make($request->only(['periodo', 'archivo']),
+        [
+            'periodo' => 'required|string',
+            'archivo' => 'required|string',
+        ]);
+
+        if ($validacion->fails()) {
+            return $this->sendResponse(200, false, 'Error de validación', $validacion->errors());
+        }
+
+        $periodo = $request->get('periodo');
+        $archivo = $request->get('archivo');
+
+
+        if ($archivo) {
+        $ruta = "evalu/".$periodo;
+        
+        $ftpModel = new FTPModel();
+        $ftpModel->obtenerArchivo($ruta, $archivo, storage_path('app/public/'));
+
+        $filePath = storage_path('app/public/' . $archivo);
+        
+        // Verificar que el archivo existe
+        if (!file_exists($filePath)) {
+            return response()->json([
+                'estado' => false,
+                'mensaje' => 'Archivo no encontrado',
+                'datos' => null
+            ], 404);
+        }
+
+        // Devolver el archivo como blob
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $archivo . '"'
+        ]);
+    }
+    }
+   
+
 
 }

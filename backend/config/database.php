@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('evaluacion','evaluacion'),
+    'default' => env('DB_CONNECTION','evaluacion'),
 
     /*
     |--------------------------------------------------------------------------

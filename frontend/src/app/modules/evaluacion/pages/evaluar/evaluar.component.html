@@ -5,22 +5,8 @@
         <div class="card">
             <div class="card-body">
                 <div class="row d-flex justify-content-between">
-                    <div class="col-xl-auto col-md-auto col-sm-auto">
-                        <div class="col-auto">
-                            <input autocomplete="off" class="btn-check" id="btnModo" type="checkbox" [(ngModel)]="esMultiple" (click)="seleccionarVarios()">
-                             <label class="btn btn-sm btn-outline-primary text-uppercase" for="btnModo">Seleccionar varios</label>
-                        </div>
-                 @if (esMultiple && (seleccionados.length > 0)) {
-                        <div class="col-auto">
-                            <button class="btn btn-sm btn-primary btn-label waves-effect waves-light text-uppercase" (click)="firmarLote()">
-                             <i class="fa fa-file-signature label-icon"></i>
-                                 Firmar por lote
-                            </button>
-                        </div>
-    }
-                    </div>
-                    <div class="col">
-                        <div class="col-4">
+                  <div class="col-6">
+                        <div class="col">
                             <div class="input-group input-group-sm">
                                      <span class="input-group-text text-uppercase"><b>Periodo</b></span>
                                          <select class="form-select form-select-sm text-uppercase" [(ngModel)]="filtros.periodo" (change)="cambiarFiltroPeriodo()">
@@ -30,8 +16,25 @@
                                         </select>
                             </div>
                         </div>
-                            
+                
+
                     </div>
+
+                    <div class="col-xl-6 col-md-6 col-sm-6 d-flex justify-content-end">
+                        <div >
+                            <input autocomplete="off" class="btn-check" id="btnModo" type="checkbox" [(ngModel)]="esMultiple" (click)="seleccionarVarios()">
+                             <label class="btn btn-sm btn-outline-primary text-uppercase" for="btnModo">Seleccionar varios</label>
+                        </div>
+                    @if (esMultiple && (seleccionados.length > 0)) {
+                        <div class="mx-2">
+                            <button class="btn btn-sm btn-primary btn-label waves-effect waves-light text-uppercase" (click)="firmarLote()">
+                             <i class="fa fa-file-signature label-icon"></i>
+                                 Firmar por lote
+                            </button>
+                        </div>
+    }
+                    </div>
+                   
                 </div>
                 <div class="row pt-4">
                     <div class="col-xl-12">
@@ -47,7 +50,7 @@
                                                 <th style="width: 110px; min-width: 110px">Acciones</th>
                                                 <th class="text-center" style="min-width: 350px; width: 150px">Apellidos y Nombres</th>
                                                 <th style="min-width: 100px; width: 100px">Categoria</th>
-                                                <th style="min-width: 360px; width: 400px">Unidad Organica</th>
+                                                <th style="min-width: 300px; width: 300px">Unidad Organica</th>
                                                 <th style="min-width: 200px; width: 260px">Servicio</th>
                                                 <th style="min-width: 200px; width: 200px">Cargo</th>
                                                 <th class="text-center" style="width: 80px; min-width: 80px">Estado</th>
@@ -55,9 +58,16 @@
                                             </tr>
                                             <tr>
                                                 <td>
+                                                     @if(esMultiple ){
+                                                    <button  (click)="seleccionarTodos()"
+                                                                     [ngClass]="esTodos? 'btn-success':'btn-secondary opacity-50'"
+                                                                        class="btn btn-sm waves-light waves-effect ">
+                                                                        <i class="fa fa-check"></i>
+                                                    </button>
+                                                                    }
                                                     <button type="button" (click)="limpiarEmpleado()"
-                                                            class="btn btn-sm w-100 btn-danger waves-effect waves-light">
-                                                        Limpiar
+                                                            class="btn btn-sm w-auto btn-danger waves-effect waves-light mx-2 ">
+                                                       <i class="fa-solid fa-broom"></i>
                                                     </button>
                                                 </td>
                                                  <td>
@@ -101,22 +111,41 @@
                                                 @for (empleado of empleados; track empleado.id) {
                                                     <tr>
                                                         <td>
-                                                            <div class="d-flex gap-1 flex-wrap">
+                                                            <div class="d-flex gap-1 flex-wrap justify-content-center">
                                                                 @if (empleado.estado != '0') {
-                                                                    <button bsTooltip="evaluar"
+                                                                    @if(esMultiple && empleado.indFirmado_eva != 1){
+                                                                    <button (click)="seleccionarResultados(empleado)"
+                                                                     [ngClass]="estaSeleccionado(empleado.id) ? 'btn-success':'btn-secondary opacity-50'"
+                                                                        class="btn btn-sm waves-light waves-effect mx-auto d-block">
+                                                                        <i class="fa fa-check"></i>
+                                                                    </button>
+                                                                    }@else{
+                                                                   
+                                                                    @if(empleado.indFirmado_eva != 1){
+                                                                        <button bsTooltip="evaluar"
                                                                             (click)="Evaluar(empleado.id,empleado.idCategoria)"
                                                                             class="btn btn-sm waves-light waves-effect btn-info">
                                                                         <i class="fa fa-pencil"></i></button>
-                                                                   
-                                                                    <button bsTooltip="firmar"
-                                                                            (click)="firmar()"
+                                                                        <button bsTooltip="firmar"
+                                                                            (click)="firmar(empleado)"
                                                                             class="btn btn-sm waves-light waves-effect btn-success">
                                                                         <i class="fa fa-file-signature"></i></button>
-                                                                     <button bsTooltip="imprimir"
-                                                                            (click)="generarPdf(empleado.id,empleado.idCategoria)"
+                                                                    }@else {
+                                                                        <button bsTooltip="imprimir"
+                                                                            (click)="imprimirFichaEvaluacion(empleado.id,empleado.archivo)"
                                                                             class="btn btn-sm waves-light waves-effect btn-primary">
                                                                         <i class="fa-solid fa-print"></i></button>
+                                                                    }
+                                                                   
+                                                                   
+                                                                    }
+                                                                 
+                                                                
                                                                 } @else {
+                                                                    <!-- <button bsTooltip="imprimir"
+                                                                            (click)="imprimirFichaEvaluacion(empleado.id,empleado.idCategoria)"
+                                                                            class="btn btn-sm waves-light waves-effect btn-primary">
+                                                                        <i class="fa-solid fa-print"></i></button> -->
                                                                     <!-- <button bsTooltip="Activar"
                                                                             (click)="abrirActivarEmpleado(empleado.id)"
                                                                             class="btn btn-sm waves-light waves-effect btn-success">
@@ -162,6 +191,7 @@
     </div>
 </div>
 
+<app-refirma (onCancel)="cancelarFirma()" (onOk)="confirmarFirma()"></app-refirma>
 
 
 

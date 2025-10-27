@@ -170,11 +170,14 @@ Route::controller(EvaluarController::class)->group(function () {
     
     Route::get('evaluacion/evaluar/generarPdf-Evaluacion', 'generarPdfEval');
     Route::get('evaluacion/evaluar/listar-historial', 'listarHistorial');
+
     Route::post('evaluacion/evaluar/guardar-evaluar', 'guardarEvaluar');
     
-    Route::get('evaluacion/evaluar/lista-evaluar-revisor', 'listarEvaluarRevisor');
+     Route::get('evaluacion/evaluar/lista-evaluar-revisor', 'listarEvaluarRevisor');
      Route::post('evaluacion/evaluar/guardar-evaluar-revisor', 'guardarEvaluarRevisor');
-
+     Route::post('evaluacion/evaluar/obtener-argumentos-firma', 'obtenerArgumentosFirma');
+     Route::post('evaluacion/evaluar/guardar-lote-firmado', 'guardarLoteFirmado');
+     Route::get('evaluar/imprimir-ficha-evaluacion', 'imprimirFichaEvaluacion');
 
 });
 Route::controller(PersonalEvaluarController::class)->group(function () {
@@ -186,11 +189,10 @@ Route::controller(PersonalEvaluarController::class)->group(function () {
     Route::post('evaluacion/evaluar/editar-personal-evaluar', 'editarPersonalEval');
 });
 Route::controller(MiEvaluacionController::class)->group(function () {
-    Route::get('evaluacion/evaluar/lista-evaluar', 'listarEvaluar');
     Route::get('evaluacion/evaluar/lista-periodos-mi-evaluacion', 'listarPeriodosMiEvaluacion');
-    Route::get('evaluacion/evaluar/lista-eval-form', 'listarEvalForm');
-    Route::get('evaluacion/evaluar/lista-eval-form-f', 'listarEvalFormF');
-    Route::get('evaluacion/evaluar/generarPdf-Evaluacion', 'generarPdfEval');
-    Route::get('evaluacion/evaluar/listar-historial', 'listarHistorial');
-
+    Route::post('evaluacion/miEvaluacion/guardar-conformidad-evaluado', 'guardarConformidad');
+    Route::post('evaluacion/miEvaluacion/obtener-argumentos-firma', 'obtenerArgumentosFirma');
+    Route::post('evaluacion/miEvaluacion/guardar-pdf-firmado-conformidad', 'guardarPdfFirmado');
 });
+
+

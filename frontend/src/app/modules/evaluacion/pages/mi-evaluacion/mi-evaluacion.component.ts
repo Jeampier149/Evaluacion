@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EvaluarService } from '@services/evaluacion/evaluar.service';
 import { finalize } from 'rxjs/operators';
 import { errorAlerta, successAlerta } from '@shared/utils';
 import { MiEvaluacionService } from '@services/evaluacion/mi-evaluacion.service';
+import { RefirmaComponent } from '@shared/components/refirma/refirma.component';
 
 @Component({
   selector: 'app-mi-evaluacion',
@@ -11,7 +12,8 @@ import { MiEvaluacionService } from '@services/evaluacion/mi-evaluacion.service'
   styleUrl: './mi-evaluacion.component.scss'
 })
 export class MiEvaluacionComponent implements OnInit{
- idEmpleado= localStorage.getItem('cc_empleado');
+     @ViewChild(RefirmaComponent) refirma!: RefirmaComponent;
+    idEmpleado= localStorage.getItem('cc_empleado');
     periodo: string = '';
     categoria= localStorage.getItem('categoria');
     loading: boolean = true;
@@ -22,7 +24,8 @@ export class MiEvaluacionComponent implements OnInit{
     empleados: any[] = [];
     periodos: any[] = [];
     valor:any=''
-
+    argumentos: any = '';
+    archivo:any=''
 
     constructor(
         public EvaluarService$: EvaluarService,
@@ -55,6 +58,7 @@ export class MiEvaluacionComponent implements OnInit{
             .subscribe(({ estado, mensaje, datos }) => {
                 if (estado) {
                     this.data = datos || {};
+                    this.archivo=datos.info_evaluacion[0].archivo
 
                     // Inicializar propiedades para evaluador y revisor
                     if (this.data.factores) {
@@ -230,17 +234,18 @@ export class MiEvaluacionComponent implements OnInit{
 
 
 
-    guardarEvaluacion() {
+    guardarConformidad() {
         let data = this.data;
-        console.log(data)
+        let periodo=this.periodo
+
         this.loading = true;
-        this.EvaluarService$.guardarEvaluarRevisor(data)
+        this.MiEvaluacion$.guardarConformidadEvaluado(data,periodo)
             .pipe(finalize(() => (this.loading = false)))
             .subscribe(({ estado, mensaje, datos }) => {
                 if (estado) {
                     successAlerta(
                         'Exito!',
-                        'Evaluacion registrada correctamente'
+                        'Conformidad registrada correctamente'
                     );
                 } else {
                     errorAlerta('Error!', mensaje).then();
@@ -301,4 +306,36 @@ export class MiEvaluacionComponent implements OnInit{
         }
         return  this.valor
     }
+        cancelarFirma() {
+            errorAlerta('Error!', 'Se canceló la firma digital.', '', {
+                didOpen: () => {
+                    this.loading = false
+                }
+            }).then()
+        }
+    
+        confirmarFirma() {
+            this.loading = false
+            successAlerta('Éxito!', 'Se guardó el documento firmado.', 1500)
+            this.listarEvaluacion()
+        }
+     firmar() {
+            let empleado=this.idEmpleado
+            let periodo=this.periodo;
+            let archivo=this.archivo
+            this.loading = true;    
+             this.MiEvaluacion$.obtenerArgumentosFirma(empleado,periodo,archivo)
+                 .pipe(
+                     finalize(() => {
+                         this.loading = false;
+                     })
+                 )
+                 .subscribe(({ estado, mensaje, datos }: any) => {
+                     if (estado) {
+                         //@ts-ignore
+                         this.argumentos = datos;
+                         this.refirma.iniciarFirma(this.argumentos);
+                   }
+                 });
+        }
 }

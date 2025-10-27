@@ -1,16 +1,33 @@
 
 <div class="row px-1 mx-1 my-3 mt-1 mb-5">
-       <div class="col-4">
-                        <div class="col-12">
+       <div class="row flex justify-content-between">
+            <div class="col-4">
                             <div class="input-group input-group-sm">
                                      <span class="input-group-text text-uppercase"><b>Periodo</b></span>
                                          <select class="form-select form-select-sm text-uppercase" [(ngModel)]="periodo" (change)="cambiarFiltroPeriodo()">
                                              @for (periodo of periodos; track periodo.cc_periodo) {
                                                         <option  [value]="periodo.cc_periodo">{{ periodo.ct_periodo }}</option>
                                                     }
-                                        </select>
-                            </div>
-                        </div>
+                                        </select> 
+                             </div>  
+            </div>        
+            <div class="col-6 d-flex justify-content-end gap-1">
+              <div>
+                  <button class="btn btn-sm btn-primary btn-label waves-effect waves-light text-uppercase" (click)="firmar()">
+                    <i class="fa fa-file-signature label-icon"></i>
+                                 Firmar 
+                  </button>
+             </div>
+             <div>
+                  <button class="btn btn-sm btn-primary btn-label waves-effect waves-light text-uppercase" (click)="firmar()">
+                    <i class="fa fa-file-signature label-icon"></i>
+                                 Imprimir 
+                  </button>
+             </div>
+            </div>
+            
+                        
+                
                             
         </div>
 
@@ -278,7 +295,7 @@
                 </div>
                 <div class="row d-flex justify-content-center mt-5">
                     <div class="col-2">
-                        <button type="button" class="btn btn-primary" (click)="guardarEvaluacion()">
+                        <button type="button" class="btn btn-primary" (click)="guardarConformidad()">
                             <i class="fas fa-save"></i> Guardar
                         </button>
                     </div>
@@ -340,12 +357,7 @@
                                                                      <tr>
                                                                         <th scope="row">Total</th>
                                                                         <td>
-                                                                            <span class="badge rounded-pill "
-                                                                           [ngClass]="{
-                                                                            'bg-success': valor=='EXCELENTE'|| valor=='SUPERIOR',
-                                                                            'bg-warning': valor=='verde',
-                                                                            'bg-danger': valor=='verde',
-                                                                            }">
+                                                                            <span class="badge rounded-pill bg-dark " >
                                                                             
                                                                                 {{data.info_evaluacion[0].ni_puntaje_cap + 
                                                                                    data.info_evaluacion[0].ni_puntaje_pun+
@@ -356,7 +368,12 @@
                                                                     </tr>
                                                                      <tr>
                                                                         <th scope="row">Rango Calificación</th>
-                                                                        <td><span class="badge rounded-pill bg-dark  ">{{ generarCalificacion()}}</span></td>
+                                                                        <td>   <span class="badge rounded-pill "
+                                                                           [ngClass]="{
+                                                                            'bg-success': valor=='EXCELENTE'|| valor=='SUPERIOR',
+                                                                            'bg-warning': valor=='verde',
+                                                                            'bg-danger': valor=='verde',
+                                                                            }">{{ generarCalificacion()}}</span></td>
                                                                     </tr>
                                                                    
                                                                 </tbody>
@@ -382,3 +399,4 @@
  
 </div>
 
+<app-refirma (onCancel)="cancelarFirma()" (onOk)="confirmarFirma()"></app-refirma>

@@ -221,7 +221,14 @@ class EvaluarModel extends Model
         return ['1', 'ok', $resultados];
     }
 
-
+    public function guardarEvaluacionFirmado(string $periodo, string $cc_empleado, string $archivo): bool
+    {
+        $smtp = $this->conexion->getPdo()->prepare(/** @lang SQL */ 'EXEC dbo.eval_sp_upd_firma_evaluador ?,?,?');
+        $smtp->bindParam(1, $periodo);
+        $smtp->bindParam(2, $cc_empleado);
+        $smtp->bindParam(3, $archivo);
+        return $smtp->execute();
+    }
 
  
 }

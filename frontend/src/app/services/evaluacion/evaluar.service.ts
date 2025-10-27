@@ -68,34 +68,18 @@ export class EvaluarService {
                 {responseType: "json"}
             );
         }
-    
-
-
-
-
-
-
-
-
-
-
-        
-     editarEvaluar(params: any): Observable<HttpResponseApi> {
-            return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/editar-evaluar', {...params},
+    obtenerArgumentosFirma(data: any,periodo:any): Observable<HttpResponseApi> {
+            return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/obtener-argumentos-firma', {data,periodo},
                 {responseType: "json"}
             );
         }
-    
-    anularEvaluar(idEvaluar: string, motivo: string): Observable<HttpResponseApi> {
-        return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/anular-evaluar', {idEvaluar, motivo},
-            {responseType: "json"}
-        );
+       imprimirFichaEvaluacion( archivo: string, periodo:string): Observable<Blob> {
+        return this.http.get('/api/evaluar/imprimir-ficha-evaluacion', {
+            params: {
+                archivo,
+                periodo
+            },
+            responseType: "blob"
+        });
     }
-
-    activarEvaluar(idEvaluar: string): Observable<HttpResponseApi> {
-        return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/activar-evaluar', {idEvaluar},
-            {responseType: "json"}
-        );
-    }
-
 }

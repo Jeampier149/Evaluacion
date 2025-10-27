@@ -17,6 +17,7 @@ import { ModalEditarPersonalEvaluarComponent } from './components/modal-editar-p
 import { MiEvaluacionComponent } from './pages/mi-evaluacion/mi-evaluacion.component';
 import { RevisorComponent } from './pages/revisor/revisor.component';
 import { FormularioEvaluarRevisorComponent } from './pages/formulario-evaluar-revisor/formulario-evaluar-revisor.component';
+import {RefirmaComponent} from "@shared/components/refirma/refirma.component";
 
 
 
@@ -41,7 +42,8 @@ import { FormularioEvaluarRevisorComponent } from './pages/formulario-evaluar-re
               TablaComponent,
               LoadingComponent,
               PaginacionComponent,
-              NgSelectModule
+              NgSelectModule,
+              RefirmaComponent
   ]
 })
 export class EvaluacionModule { }

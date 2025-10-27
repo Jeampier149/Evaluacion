@@ -49,41 +49,30 @@ export class MiEvaluacionService {
         }
 
 
-  
-     guardarEvaluar(data: any): Observable<HttpResponseApi> {
-            return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/guardar-evaluar', {data},
+     guardarConformidadEvaluado(data: any,periodo:any): Observable<HttpResponseApi> {
+            return this.http.post<HttpResponseApi>('/api/evaluacion/miEvaluacion/guardar-conformidad-evaluado', {data,periodo},
                 {responseType: "json"}
             );
         }
 
-          
-
-
-
-
-
-
-
-
-
-
-        
-     editarEvaluar(params: any): Observable<HttpResponseApi> {
-            return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/editar-evaluar', {...params},
+      obtenerArgumentosFirma(empleado: any,periodo:any,archivo:any): Observable<HttpResponseApi> {
+            return this.http.post<HttpResponseApi>('/api/evaluacion/miEvaluacion/obtener-argumentos-firma', {empleado,periodo,archivo},
                 {responseType: "json"}
             );
         }
-    
-    anularEvaluar(idEvaluar: string, motivo: string): Observable<HttpResponseApi> {
-        return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/anular-evaluar', {idEvaluar, motivo},
-            {responseType: "json"}
-        );
-    }
+       imprimirFichaEvaluacion( archivo: string, periodo:string): Observable<Blob> {
+        return this.http.get('/api/evaluar/imprimir-ficha-evaluacion', {
+            params: {
+                archivo,
+                periodo
+            },
+            responseType: "blob"
+        });
+    }      
 
-    activarEvaluar(idEvaluar: string): Observable<HttpResponseApi> {
-        return this.http.post<HttpResponseApi>('/api/evaluacion/evaluar/activar-evaluar', {idEvaluar},
-            {responseType: "json"}
-        );
-    }
+
+
+
+
 
 }
